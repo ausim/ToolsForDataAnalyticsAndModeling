@@ -1,3 +1,4 @@
+# Open database for INSY6500 and list tables.
 # initial setup
 import mysql.connector
 
