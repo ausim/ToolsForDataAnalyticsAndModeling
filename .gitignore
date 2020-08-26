@@ -12,3 +12,4 @@ ToolsForDataAnalyticsAndModeling.Rproj
 .Rhistory
 .Rproj.user/*
 
+*.pyc
