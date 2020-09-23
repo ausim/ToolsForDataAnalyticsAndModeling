@@ -38,11 +38,12 @@ fnames = {
     ,"ervs"      :"13_erv.csv"
     ,"fexchange" :"14_Foreign_Exchange_Rates.csv"
     ,"gmobility" :"15_Global_Mobility_Report.csv"
+    ,"shoppers"  :"16_online_shoppers_purchasing_intention.csv"
 }
 
 # %%
 # Grab a data set using the key and show the first few rows
-fkey = "songs"
+fkey = "shoppers"
 fpath = "data/"
 df = pd.read_csv(fpath+fnames[fkey])
 show(df)
