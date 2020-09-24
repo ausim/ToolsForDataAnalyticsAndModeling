@@ -10,6 +10,7 @@ import os
 
 # show - displays the Pandas object 
 def show(data, show_data = 0):
+    print ("   Type: {:}".format(type(data)))
     print ("  Index: {:}".format(data.index))
     print ("Columns: {:}".format(data.columns))
     print ("  Shape: {:}".format(data.shape))
@@ -43,7 +44,7 @@ fnames = {
 
 # %%
 # Grab a data set using the key and show the first few rows
-fkey = "shoppers"
+fkey = "cities"
 fpath = "data/"
 df = pd.read_csv(fpath+fnames[fkey])
 show(df)
