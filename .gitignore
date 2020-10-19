@@ -13,5 +13,6 @@ ToolsForDataAnalyticsAndModeling.Rproj
 .Rproj.user/*
 .spyproject/*
 *.pyc
+data/arrival_data/*
 data/~$Miscellaneous Datasets.xlsx
 notebooks/first_figure.png
