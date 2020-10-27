@@ -87,7 +87,7 @@ summary(mtcars)
 print(getwd())
 
 # Read the econcomic data
-data <- read.csv("..\\..\\data\\10_us_economic_data.csv", stringsAsFactors=FALSE)
+data <- read.csv("data\\10_us_economic_data.csv", stringsAsFactors=FALSE)
 head(data,10)
 # structure of the data
 str(data)
