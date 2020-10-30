@@ -19,7 +19,7 @@ print(my_str)
 my_str <- "blue."
 
 # ---> You can clear the environment using the broom icon
-# or using the rm() command
+# or using the rm() command (e.g., rm(my_str) )
 
 #
 # --------------------------------------------------------------
