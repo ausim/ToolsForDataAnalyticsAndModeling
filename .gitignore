@@ -17,3 +17,4 @@ data/arrival_data/*
 data/~$Miscellaneous Datasets.xlsx
 notebooks/first_figure.png
 .Rproj.user
+.RData

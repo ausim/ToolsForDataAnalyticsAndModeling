@@ -21,8 +21,8 @@ mpg # to show the first 10 rows + information
 # values using this method.
 fix(mpg)
 
-# Is therea relationship between engine size and gas mileage?
-# basic scatter plot
+# Is there a relationship between engine size and gas mileage?
+# Try a basic scatter plot:
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy))
 
@@ -65,7 +65,6 @@ ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, color="blue"))
 # color is specified inside the aesthetic, not in the mapping.
 
-# ---- Ended on 10/22
 #
 # Note that we can also define the mapping with the data rather than
 # with the geom.  This will be useful below when we have multiple
@@ -121,7 +120,7 @@ ggplot(data = mpg) +
   geom_smooth(mapping = aes(x = displ, y = hwy)) +
   geom_point(mapping = aes(x = displ, y = hwy, color = class))
 
-# here's where it's conveneient to define part
+# here's where it's convenient to define part
 # of the mapping in the initial ggplot function call
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
   geom_smooth() +

@@ -24,6 +24,8 @@ my_str <- "blue."
 
 # --- Figure out the root directory (for file paths)
 print(getwd())
+# if you want to store the current working directory
+cwd <- getwd()
 
 #
 # --------------------------------------------------------------
@@ -123,8 +125,15 @@ x[3:5]
 x[c(2, 3, 6)]
 # Note that the negative index doesn't mean start from the end,
 # but remove that specific element (or vector).
-x[-2]
-x[c(-2, -5)]
+x[-2] # notice that there is no 17.8 (element 2 in x)
+x[c(-2, -5)] # now no 17.8 or 68 (elements 2 and 5, respectively)
+# also note that the variable x doesn't change unless you use an
+# assignment
+x <- x[-2] # ---> watch he environment on repeated executions ---->
+
+# back or original
+x <- c(12.2, 17.8, 55.4, 35, 68, 55, 23, 97.6)
+
 
 
 # --------------------------------------------------------------
@@ -215,7 +224,7 @@ class(factor_data)
 # Create the data frame.
 emp.data <- data.frame(
       emp_id = c (1:5), 
-    emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
+      emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
       salary = c(623.3,515.2,611.0,729.0,843.25), 
   start_date = as.Date(c("2012-01-01", "2013-09-23", "2014-11-15", "2014-05-11",
                          "2015-03-27")),
@@ -223,6 +232,7 @@ emp.data <- data.frame(
 )
 # Print the data frame.			
 print(emp.data) 
+# Also look in the environment --->
 
 # using factors with data frames
 # Create the vectors for data frame.
@@ -231,7 +241,7 @@ weight <- c(48,49,66,53,67,52,40)
 gender <- c("male","male","female","female","male","female","male")
 # Create the data frame.
 input_data <- data.frame(height,weight,gender)
-print(input_data)
+print(input_data) # and look in environment --->
 # Test if the gender column is a factor.
 print(is.factor(input_data$gender))
 # Print the gender column so see the levels.
@@ -264,8 +274,12 @@ inspect(data.frame(V1=c(1, 2, 3, 4)), TRUE)
 
 # see lexical_scoping_example.R
 
+#
+# We've seen assignment and sequence impcations -- From
+# our Pillars of Programming, Selection and Repetition remain.
+#
 # --------------------------------------------------------------
-# Selection -- if statemenets
+# Selection -- if statements
 x <- 400
 if (x < 200) {
   print("Yep")
@@ -279,7 +293,6 @@ if("Truth" %in% x) {
 } else {
   print("Truth is not found")
 }
-
 
 # --------------------------------------------------------------
 # Repetition -- Loops
