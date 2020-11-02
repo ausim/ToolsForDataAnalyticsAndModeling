@@ -12,7 +12,7 @@ print(my_str)
 
 ```
 
-Try a Plot -- check out the cool swtiching between plot and console views.
+Try a Plot -- check out the cool switching between plot and console views.
 
 ```{r}
 require(tidyverse)
