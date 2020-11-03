@@ -3,7 +3,7 @@
 #  jeff smith
 #
 # Note - this script is meant to be used interactively, not in "source" mode.
-# Video Modules - http://jsmith.co/node/258
+# Video Modules - https://jsmithco.wordpress.com/educational-modules/analytics-course-modules/r-related-modules/
 # ----------------------------------------------------------------------------------
 # Use the built-in mtcars dataframe
 help(mtcars)

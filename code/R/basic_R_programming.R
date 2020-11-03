@@ -90,7 +90,7 @@ x <- c(12.2, 17.8, 55.4, 35, 68, 55, 23, 97.6)
 print(x)
 length(x)
 print(class(x))
-# R indices are 1-based (where Python's are 0-based)
+# R indexes are 1-based (where Python's are 0-based)
 x[1]
 z[1]
 
@@ -129,9 +129,9 @@ x[-2] # notice that there is no 17.8 (element 2 in x)
 x[c(-2, -5)] # now no 17.8 or 68 (elements 2 and 5, respectively)
 # also note that the variable x doesn't change unless you use an
 # assignment
-x <- x[-2] # ---> watch he environment on repeated executions ---->
+x <- x[-2] # ---> watch the environment on repeated executions ---->
 
-# back or original
+# back to original
 x <- c(12.2, 17.8, 55.4, 35, 68, 55, 23, 97.6)
 
 
@@ -203,18 +203,21 @@ print(P[,3])
 
 # --------------------------------------------------------------
 # Factors
-# Used for categorical data where there are a fixed number of values to select from
+# Used for categorical data where there are a fixed number of values to select from.
+#
 # Create a vector as input.
 data <- c("East","West","East","North","North","East","West","West","West","East","North")
 print(data)
+# See if this data is Factor
 print(is.factor(data))
 class(data)
 
 # Apply the factor function.
-factor_data <- factor(data)
+factor_data <- factor(data) # Check the environment --->
 print(factor_data)
 print(is.factor(factor_data))
 class(factor_data)
+
 
 # --------------------------------------------------------------
 # Data Frames - this section focuses on creating data frames and
@@ -240,7 +243,7 @@ height <- c(132,151,162,139,166,147,122)
 weight <- c(48,49,66,53,67,52,40)
 gender <- c("male","male","female","female","male","female","male")
 # Create the data frame.
-input_data <- data.frame(height,weight,gender)
+input_data <- data.frame(height,weight,gender,stringsAsFactors=TRUE)
 print(input_data) # and look in environment --->
 # Test if the gender column is a factor.
 print(is.factor(input_data$gender))
@@ -275,7 +278,7 @@ inspect(data.frame(V1=c(1, 2, 3, 4)), TRUE)
 # see lexical_scoping_example.R
 
 #
-# We've seen assignment and sequence impcations -- From
+# We've seen assignment and sequence implications -- From
 # our Pillars of Programming, Selection and Repetition remain.
 #
 # --------------------------------------------------------------
@@ -287,7 +290,7 @@ if (x < 200) {
   print("Nope")
 }
 
-x <- c("what","is","truth")
+x <- c("what","is","Truth")
 if("Truth" %in% x) {
   print("Truth is found")
 } else {
@@ -321,3 +324,4 @@ repeat {
     break
   }
 }
+

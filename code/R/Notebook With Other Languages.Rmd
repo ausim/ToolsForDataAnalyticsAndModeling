@@ -1,7 +1,9 @@
 ---
 title: "First R Notebook"
-output: html_notebook
-author: Jeff Smith
+author: "Jeff Smith"
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 ```{r}

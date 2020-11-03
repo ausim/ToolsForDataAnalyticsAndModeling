@@ -2,8 +2,11 @@
 title: "Sample R Notebook"
 author: "Jeff Smith"
 output:
-  word_document: default
+  pdf_document: default
   html_notebook: default
+  word_document: default
+  html_document:
+    df_print: paged
 ---
 
 R Notebooks use R Markdown.  Code stored in "chunks."  Chunks can be executed individually or as a group.  Code can be in a variety of lanugages -- noteably for us -- R, Python, and SQL.  Information at: https://rmarkdown.rstudio.com/.
