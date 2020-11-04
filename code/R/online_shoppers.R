@@ -11,3 +11,8 @@ head(data,10)
 # structure of the data
 str(data)
 summary(data)
+
+# Records from Operating System 4
+os4 <- data[data$OperatingSystems == 4,c("Index", "BounceRates", "ExitRates","Weekend","Revenue")]
+
+
