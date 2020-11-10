@@ -21,14 +21,14 @@ mpg # to show the first 10 rows + information
 # values using this method.
 fix(mpg)
 
-# Is there a relationship between engine size and gas mileage?
+# Start with a question: Is there a relationship between engine size and gas mileage?
 # Try a basic scatter plot:
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy))
 
 # help again - note the question mark in front of the function name
 ?ggplot()
-# Slide with Graphing Template
+# PPTX Slide with Graphing Template
 
 # color the dots by class (a new variable from the data).  Note that
 # the color parameter is inside the aesthetic function here
