@@ -16,7 +16,7 @@ library(tidyverse)
 mpg # to show the first 10 rows + information
 # What is a tibble?  type 'tibble' and the look for the context menu
 
-# View/Edit in grid format and add to the environment
+# View/Edit in grid format and add to the environment (------>)
 # Note that you can edit existing values and add new 
 # values using this method.
 fix(mpg)
@@ -34,6 +34,7 @@ ggplot(data = mpg) +
 # the color parameter is inside the aesthetic function here
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, color = class))
+# Does this help the plot?  Hurt the plot?
 
 # What about city mileage?
 ggplot(data = mpg) + 
@@ -47,15 +48,23 @@ ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, size = class))
 # Note the warning about using size for a discrete variable.
 
+# What if we flip the x and size?
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = class, y = hwy, size = displ))
+# Is this a "good" plot?  What does "good" mean in this sense?
+
 # use size and color
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, size = class, color=class))
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = class, y = hwy, size = displ, color=displ))
 
 # use transparency (alpha)
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
 
-# orange dots - note that the color parameter is outside of
+# All orange dots - note that the color parameter is outside of
 # the aesthetic function here.
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy), color="orange")
@@ -64,6 +73,7 @@ ggplot(data = mpg) +
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, color="blue"))
 # color is specified inside the aesthetic, not in the mapping.
+# Book describes other common mistakes/problems.
 
 #
 # Note that we can also define the mapping with the data rather than
@@ -172,16 +182,24 @@ ggplot(data = mpg[mpg$drv == 'f',],
   geom_smooth(method="glm", se=FALSE) +
   geom_point()
 
+# or of your prefer the dplyr approach
+ggplot(data = filter(mpg, drv == 'f'), 
+       mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_smooth(method="glm", se=FALSE) +
+  geom_point()
+
 
 # ---------------------------------
 #
 # Statistical transformations - for the previous plots, we
 # were plotting the data "as is" with different aesthetics.
 # Now let's look and some aggregation/transformations.
+
+# First, a new data set ...
+diamonds
+
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut))
-
-diamonds
 
 # if you prefer proportions ...
 ggplot(data = diamonds) + 
@@ -192,6 +210,7 @@ ggplot(data = diamonds) +
 
 # More details
 vignette("ggplot2-specs")
+
 
 # Add some stats - stat_summary() summarizes the y values
 # for each unique x value
@@ -218,9 +237,13 @@ ggplot(data = diamonds) +
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity))
 
-# diffrent layout, same information
+# different layout, same information
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge")
+
+
+# Some additional examples in online_shoppers.R
+
 
 #
 # Coordinate Systems

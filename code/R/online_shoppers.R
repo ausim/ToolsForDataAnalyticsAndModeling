@@ -26,6 +26,7 @@ data[,'OperatingSystems'] = factor(data[,'OperatingSystems'])
 data[,'VisitorType'] = factor(data[,'VisitorType'])
 data[,'Browser'] = factor(data[,'Browser'])
 data[,'Region'] = factor(data[,'Region'])
+# How do we know that these should be factors?
 
 # Create a tibble from the data frame
 tdata <- as_tibble(data)
