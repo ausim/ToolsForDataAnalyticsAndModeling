@@ -17,16 +17,15 @@ summary(data)
 # Records from Operating System 4
 os4 <- data[data$OperatingSystems == 4,c("Index", "BounceRates", "ExitRates","Weekend","Revenue")]
 
-
 # Use Tidyverse for some visualization
 library(tidyverse)
 
-# Let's convert some of the integer columns to factors
+# Let's convert some of the integer columns to factors so that
+# we can use them for the aesthetics
 data[,'OperatingSystems'] = factor(data[,'OperatingSystems'])
 data[,'VisitorType'] = factor(data[,'VisitorType'])
 data[,'Browser'] = factor(data[,'Browser'])
 data[,'Region'] = factor(data[,'Region'])
-
 
 # Create a tibble from the data frame
 tdata <- as_tibble(data)
@@ -54,5 +53,24 @@ ggplot(data = tdata) +
 
 # Time vs Browser?
 ggplot(data = tdata) + 
-  geom_point(mapping = aes(x = Browser, y = ProductRelated_Duration, color=Browser))
+  geom_point(mapping = aes(x = Browser, y = ProductRelated_Duration, color=Region))
+
+# Boxplot
+ggplot(data = tdata, mapping = aes(x = Browser, y = ProductRelated_Duration)) + 
+  geom_boxplot()
+
+# looks like we need to remove the zero values
+ggplot(data = filter(tdata,ProductRelated_Duration >0), mapping = aes(x = Browser, y = ProductRelated_Duration)) + 
+  geom_boxplot()
+
+# try an upper bound also ... try 20,000; 10,000
+ggplot(data = filter(tdata, ProductRelated_Duration > 0 & ProductRelated_Duration < 20000), mapping = aes(x = Browser, y = ProductRelated_Duration)) + 
+  geom_boxplot()
+
+ggplot(data = filter(tdata, ProductRelated_Duration > 0 & ProductRelated_Duration < 20000), mapping = aes(x = Browser, y = ProductRelated_Duration)) + 
+  geom_boxplot() +
+  coord_flip()
+
+
+
 
