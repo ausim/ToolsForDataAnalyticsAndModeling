@@ -42,7 +42,7 @@ mean(hp);sd(hp)
 wt <- mtcars[[6]] # ---> environment
 mean(wt); sd(wt)
 
-# row slection
+# row selection
 # Note the trailing comma when row slicing.  Without it, you're requesting
 # a column rather than row slice.
 mtcars['Hornet Sportabout',]
@@ -51,7 +51,7 @@ rows1 <- mtcars['Hornet Sportabout',c(1, 2, 3)]
 rows2 <- mtcars[c(1, 3, 5, 7),]
 
 # logical indexing (masking)
-heavy <- mtcars$wt > 4 # ---> environemnt
+heavy <- mtcars$wt > 4 # ---> environment
 # Slice the heavy cars
 heavy_cars <- mtcars[heavy,]
 # apply the condition directly
