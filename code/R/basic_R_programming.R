@@ -84,11 +84,12 @@ class(v)
 # note that this single value is a vector (of length 1)
 z <- 27.5
 z
-length(z)
+is.vector(z); length(z)
+
 
 x <- c(12.2, 17.8, 55.4, 35, 68, 55, 23, 97.6)
 print(x)
-length(x)
+is.vector(x); length(x)
 print(class(x))
 # R indexes are 1-based (where Python's are 0-based)
 x[1]
@@ -133,7 +134,6 @@ x <- x[-2] # ---> watch the environment on repeated executions ---->
 
 # back to original
 x <- c(12.2, 17.8, 55.4, 35, 68, 55, 23, 97.6)
-
 
 
 # --------------------------------------------------------------
