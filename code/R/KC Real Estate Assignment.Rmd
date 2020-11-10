@@ -1,0 +1,25 @@
+---
+title: "HW5 - King County Real Estate Assignment"
+output: html_notebook
+author: Jeff Smith
+---
+You are planning a move to Seattle and are hoping to buy a house/condo/townhouse with your new-found wealth from your signing bonus with Amazon.  Using the provided King County real estate transaction information, conduct an Exploratory Data Analysis with the primary objective of collecting information for your future purchase.  The data are similar, but not identical to the Auburn real estate data that we used in class.  The script file that we used with the Auburn data in class should be of significant help to you.  
+
+In addition to the analysis/plots that you generate, be sure to use markdown sections of this notebook to describe your findings and discuss "what the data tells you."  Feel free to make comparisons to the Auburn market if you find that informative.
+
+In addition to the exploratory data analysis, use the modelr package to develop a regression-type predictive model that predicts price based on square footage (using sqft_living for the square footage).  The models_example1.R script file and the corresponding class and video materials should provide a guideline for this part of the assignment.
+
+The data file used for this assignment is from the Coursera course "Machine Learning: Regression" - https://www.coursera.org/learn/ml-regression/home/welcome
+
+
+```{r}
+library("tidyverse")
+getwd()
+
+kcre <- read_csv("..\\..\\data\\kc_house_data.csv")
+kcre
+
+```
+
+
+

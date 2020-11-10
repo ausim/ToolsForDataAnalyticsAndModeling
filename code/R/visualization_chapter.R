@@ -94,7 +94,7 @@ ggplot(data = mpg) +
 ggplot(data = tiris) +
   geom_point(mapping = aes(x = Sepal.Length, y = Petal.Length)) +
   facet_wrap(~ Species)
-# facets should be factors
+# facets should be discrete
 
 # two variables (grid rather than wrap)
 ggplot(data = mpg) + 
