@@ -201,9 +201,13 @@ diamonds
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut))
 
+# if you prefer proportions ... DEPRECATED VERSION
+#ggplot(data = diamonds) + 
+#  geom_bar(mapping = aes(x = cut, y = ..prop.., group = 1))
+
 # if you prefer proportions ...
 ggplot(data = diamonds) + 
-  geom_bar(mapping = aes(x = cut, y = ..prop.., group = 1))
+  geom_bar(mapping = aes(x = cut, y = stat(prop), group = 1))
 
 #Help!
 ?geom_bar
