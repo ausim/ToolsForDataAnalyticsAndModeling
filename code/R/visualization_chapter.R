@@ -9,6 +9,7 @@ library(tidyverse)
 # install.packages("tidyverse")
 # and retry the library() function.
 
+# MPG Dataset ----
 # use ? to get help.  Consider a dataset (e.g., mpg), ?mpg gives
 # a help page
 ?mpg
@@ -21,6 +22,7 @@ mpg # to show the first 10 rows + information
 # values using this method.
 fix(mpg)
 
+# Scatter plots -----
 # Start with a question: Is there a relationship between engine size and gas mileage?
 # Try a basic scatter plot:
 ggplot(data = mpg) + 
@@ -86,7 +88,7 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = class)) +
 ?iris
 tiris <- as_tibble(iris) 
 
-# other built-in datasets?
+# other built-in data sets?
 ?datasets
 library(help = "datasets")
 
@@ -221,9 +223,9 @@ vignette("ggplot2-specs")
 ggplot(data = diamonds) + 
   stat_summary(
     mapping = aes(x = cut, y = depth),
-    fun.ymin = min,
-    fun.ymax = max,
-    fun.y = median
+    fun.min = min,
+    fun.max = max,
+    fun = median
   )
 
 ?stat_summary

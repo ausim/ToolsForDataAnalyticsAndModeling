@@ -5,6 +5,7 @@
 library(tidyverse)
 library(nycflights13)
 
+# NYC Flights Dataset -----
 # check out the dataset
 ?nycflights13::flights
 nycflights13::flights
@@ -14,22 +15,23 @@ flights
 # Some data on the dataset
 class(nycflights13::flights)          # get class
 sapply(nycflights13::flights, class)  # get class of all columns
-# sapply?
+# What is this sapply function?
 ?sapply
 str(nycflights13::flights)            # structure
 summary(nycflights13::flights)        # summary
 colnames(nycflights13::flights)       # columns names
 nrow(nycflights13::flights)           # number of rows
 ncol(nycflights13::flights)           # number of columns
-
+# So it's a relatively large data set of real data
 
 #
 # Using dplyr
 #
 # Filter ----------------------------------------------------------
 # Create a new data frame with the january 1 flights
-# note that the outer () mean to print after the assignment
 (jan1 <- filter(flights, month == 1, day == 1))
+# note that the outer () mean to print after the assignment
+
 
 # Seems out of place -- but important.    
 # Comparisons -- floating point == can be problematic
@@ -43,7 +45,7 @@ near(1/49*49, 1)
 # that is clearer to you!
 (nov_dec <- filter(flights, month == 11 | month == 12))
 (nov_dec <- filter(flights, month %in% c(11, 12)))
-# don't use "month == 11 | 12" --- why?
+# don't use "month == 11 | 12" --- why?  Test it out!
 
 # suppose you want to know how many flights from august
 # had departure delays of more that 2 hours
@@ -58,7 +60,7 @@ near(1/49*49, 1)
 # values.  So there is no need to use omit.na() or similar functions.
 
 #
-# For comparison, suppose you wanted to these two filter operations
+# For comparison, suppose you wanted these two filter operations
 # with standard data frames instead of tibbles and filter()
 # Nov+Dec flights
 # Note the trailing comma to filter the rows of a DataFrame...
@@ -67,6 +69,9 @@ near(1/49*49, 1)
 mask = flights$month == 11 | flights$month == 12
 # if you just wanted a count of the flights ...
 sum(mask)
+# the sum result should be the number of rows in the dataframe.  Why?
+
+
 # August late departures
 #
 # try counting them first
@@ -85,7 +90,7 @@ aug_baddies2 = tmp[tmp$month == 8 & tmp$dep_delay > 120,]
 # To practice, think of an interesting question and develop the 
 # corresponding filter for it ...
 #
-# flights by tailnum N5CLAA
+# flights by tail number N5CLAA
 n5claa <- filter(flights, tailnum =="N5CLAA")
 
 # flights headed for miami during November, December, January, February
@@ -100,15 +105,22 @@ late_beach <- filter(flights, dest == 'MIA', (month %in% c(1, 2, 11, 12)), arr_d
 
 #
 # Arrange ----------------------------------------------------------
+#
 # Sort the data -- note that a new tibble is returned, the original is left unchanged
 arrange(flights, year, month, day)
+arrange(flights, desc(day), month)
 
+# if you want to save the sorted values, assign
 (bad_flights <- arrange(flights, desc(dep_delay)))
+
 
 #
 # Select ----------------------------------------------------------
+#
 # Select specific columns
 select(flights, year, month, day, dep_time)
+
+select(arrange(flights, desc(day)), day, month, dep_time)
 
 # helper functions
 select(flights, starts_with("arr"))
@@ -117,39 +129,45 @@ select(flights, contains("dep"))
 
 #
 # Mutate ----------------------------------------------------------
-# Adding new comlumns
-
+# Adding new columns
+# Create a new tibble with selected columns
 flights_sml <- select(flights, 
   year:day, 
   ends_with("delay"), 
   distance, 
   air_time
 )
+# Add some new computed columns
 mutate(flights_sml,
   gain = dep_delay - arr_delay,
   speed = distance / air_time * 60,
   hours = air_time / 60,
   gain_per_hour = gain / hours
 )
+# Check the environment ----> We mutate doesn't change
+# the data frame -- it returns the mutated data frame.
 
-# transmute if you only want the new columns
-
+# Use transmute if you only want the new columns
 transmute(flights,
   gain = dep_delay - arr_delay,
   hours = air_time / 60,
   gain_per_hour = gain / hours
 )
 
+
 #
 # Sumarise and Group By ----------------------------------------------------------
+#
 summarise(flights, delay=mean(dep_delay, na.rm = TRUE))
 
+# Group the flights by day
 by_day <- group_by(flights, year, month, day)
+
 summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
 # So, what is the by_day object -- In the environment, it looks just like bad_flights
 class(by_day)
 class(flights)
-?group_by
+?group_by # Ah, creates a "grouped tibble"
 
 # to save the daily summaries from above:
 daily_summaries <- summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
@@ -166,15 +184,19 @@ s <- summarize(by_dest,
 (s <- arrange(s, desc(num)))
 
 #
-# piping
+# piping - See pptx slide -------------------------
 #
 # consider this sample analysis
+# Group by destination
 by_dest <- group_by(flights, dest)
+# Sumarize teh number of flights, mean distance, and mean delay
 delay <- summarise(by_dest,
                    count = n(),
                    dist = mean(distance, na.rm = TRUE),
                    delay = mean(arr_delay, na.rm = TRUE)
 )
+# filter to destinations with more that 20 flights and 
+# exclude Honolulu
 (delay1 <- filter(delay, count > 20, dest != "HNL"))
 
 # It looks like delays increase with distance up to ~750 miles 
@@ -185,8 +207,10 @@ ggplot(data = delay1, mapping = aes(x = dist, y = delay)) +
   geom_smooth(se = FALSE)
 #> `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
+#
 # The 'pipe' allows you to do this type of multi-step process
 # without storing the intermediate results;
+#
 (delay2 <- flights %>% 
   group_by(dest) %>% 
   summarise(
@@ -195,9 +219,11 @@ ggplot(data = delay1, mapping = aes(x = dist, y = delay)) +
     delay = mean(arr_delay, na.rm = TRUE)
   ) %>% 
   filter(count > 20, dest != "HNL"))
+# %>% ==> "then"
+# See the pptx slide
 
 
-# Suppose that you want to know the popular destinations and thier distances
+# Suppose that you want to know the popular destinations and their distances
 #
 (popular_dests <- flights %>%
   group_by(dest) %>%
@@ -209,18 +235,31 @@ ggplot(data = delay1, mapping = aes(x = dist, y = delay)) +
   mutate(tot = num * dist) %>%
   arrange(desc(num)))
 
+#
+# Practice, practice, practice.  Ask a question, then formulate
+# the dyplyr statement to generate "the answer"
+#
 
-# Meal example from the Python section of the class
+#
+# Meal example from the Python section of the class ---------------------
+#
+# pptx slide ->
+#
 # Get the current working directory
 print(getwd())
-# Read the meals data
-data <- read.csv("..\\..\\data\\12_meals.csv", stringsAsFactors=FALSE)
+# Read the meals data and create a tibble
+data <- read.csv("data\\12_meals.csv", stringsAsFactors=FALSE)
 meals <- as_tibble(data)
 
-
+# Compute the tip percentage
 meals <- meals %>%
   mutate(tip_percentage = tip / cost)
+# Note that the mutate operation did not update 
+# the meals tibble, but the assignment overwrote the
+# the previous version, so the net effect was updating
+# the tibble.
 
+# summarize the whole dataset.
 summarize(meals, count=n(), 
          avg_tip=mean(tip, na.rm=TRUE),
          avg_cost=mean(cost, na.rm = TRUE),
@@ -230,15 +269,16 @@ summarize(meals, count=n(),
 
 # By day: we could filter
 meals %>%
-  filter(day == "Thu") %>%
+  filter(day == "Fri") %>%
   summarize(count=n(), 
             avg_tip=mean(tip, na.rm=TRUE),
             avg_cost=mean(cost, na.rm = TRUE),
             med_tp = median(tip_percentage, na.rm = TRUE),
             total_people = sum(party_size, na.rm = TRUE)
   )
+# for each day
 
-# Or group
+# Or group and do it in one shot.
 (meals_by_day <- meals %>%
   group_by(day) %>%
   summarise (
@@ -249,7 +289,7 @@ meals %>%
     total_people = sum(party_size, na.rm = TRUE)
   ))
 
-
+# Try by meal ...
 (meals_by_meal <- meals %>%
   group_by(meal) %>%
   summarise (
@@ -260,7 +300,7 @@ meals %>%
     total_people = sum(party_size, na.rm = TRUE)
   ))
 
-
+# Who pays ...
 (meals_by_payer <- meals %>%
   group_by(payer) %>%
   summarise (
@@ -270,3 +310,41 @@ meals %>%
     med_tp = median(tip_percentage, na.rm = TRUE),
     total_people = sum(party_size, na.rm = TRUE)
   ))
+
+# Diamond data set -------------------------------
+diamonds
+
+# by cut
+(by_cut <- diamonds %>%
+    group_by(cut) %>%
+    summarise(
+      count = n(),
+      avg_price = mean(price, na.rm=TRUE)
+      ) %>%
+    arrange(desc(avg_price)))
+
+# by clarity
+(by_clarity <- diamonds %>%
+    group_by(clarity) %>%
+    summarise(
+      count = n(),
+      avg_price = mean(price, na.rm=TRUE)
+    ) %>%
+    arrange(desc(avg_price)))
+
+# Accessing build-in datasets -------
+library(datasets)
+
+# if you want to see the details
+library(help='datasets')
+# also at https://www.rdocumentation.org/packages/datasets/versions/3.6.2
+
+# How about some European stock prices?
+(eustock <- as_tibble(datasets::EuStockMarkets))
+
+str(eustock)
+summary(eustock)
+
+# Practice, practice, practice.
+
+
