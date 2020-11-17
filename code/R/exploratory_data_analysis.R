@@ -9,6 +9,9 @@ library("tidyverse")
 aure <- read_csv("data\\au_real_estate_2017_anon.csv")
 
 # structure of the data
+str(aure)
+
+# Add some columns
 aure <- aure %>%
   mutate(
     Baths = BathsFull + BathsHalf,
@@ -48,10 +51,14 @@ filter(aure, SqFt == 0)
 # Number of bedrooms/bathrooms
 ggplot(data = aure) +
   geom_bar(mapping = aes(x=Bedrooms,fill=NBath))
-# Note that we need the categorial variable for the fill aesthetic.  
+# Note that we need the categorical variable for the fill aesthetic.  
 # Try using the numerical value instead ...
 ggplot(data = aure) +
   geom_bar(mapping = aes(x=Bedrooms,fill=Baths))
+# Also note that we used the mutated variable NBath (which
+# includes full and half-baths).  What if we wanted
+# the same plot by full baths only?
+
 
 # How long do properties stay on the market?
 ggplot(data = aure) +
@@ -59,21 +66,29 @@ ggplot(data = aure) +
   geom_vline(xintercept=mean(aure$DaysOnMarket), color="red")
 # Hmmm ... some negative values?
 filter(aure, DaysOnMarket < 0)
-# Yep -- mental note.
-# Looks like a significant outlier ....
+# Yep -- another mental note.
+# Also looks like a significant outlier ....
 # may need in install the pillar package here ...
 filter(aure, DaysOnMarket > 2000)
+# that's close to 10 YEARS on the market
 
+# Let's try it without the big outlier and add the median in addition 
+# to the mean
 ggplot(data = filter(aure, DaysOnMarket > 0, DaysOnMarket < 1000)) +
   geom_histogram(mapping = aes(x = DaysOnMarket)) +
   geom_vline(xintercept=mean(filter(aure, DaysOnMarket > 0, DaysOnMarket < 1000)$DaysOnMarket), color="red") +
   geom_vline(xintercept=median(filter(aure, DaysOnMarket > 0, DaysOnMarket < 1000)$DaysOnMarket), color="blue")
-# still looks like a couple of outliners  -- what about limiting to 1 year on the market?
+# still looks like a couple of outliers  -- what about limiting to 1 year on the market?
+# First see what we're excluding
+filter(aure, DaysOnMarket > 365)
+# now plot it
 ggplot(data = filter(aure, DaysOnMarket > 0, DaysOnMarket < 365)) +
   geom_histogram(mapping = aes(x = DaysOnMarket)) +
   geom_vline(xintercept=mean(filter(aure, DaysOnMarket > 0, DaysOnMarket < 365)$DaysOnMarket), color="red") +
   geom_vline(xintercept=median(filter(aure, DaysOnMarket > 0, DaysOnMarket < 365)$DaysOnMarket), color="blue")
-
+# Note that these outliers may not be data errors.  In this particular case,
+# the big outlier is not an error -- but I only know this because I checked
+# with other sources to find it.
 
 
 #
@@ -166,7 +181,11 @@ aure %>%
 # Aggregation/Grouping ------------------------------------------------
 #
 # summarize the data
-summarise(aure, num=n(), dollars=sum(Price), dom=mean(DaysOnMarket), dom1=median(DaysOnMarket))
+summarise(aure, num=n(), 
+          tot_dollars=sum(Price),
+          avg_dollars=mean(Price),
+          dom=mean(DaysOnMarket), 
+          dom1=median(DaysOnMarket))
 
 # By Subdivision- group and summarize 
 subdivision <- aure %>%
@@ -259,7 +278,7 @@ ggplot(data = filter(agency_prodn, dollars < 5000000)) +
 # Meals Tip Data
 #
 # Read the meals data
-data <- read.csv("..\\..\\data\\12_meals.csv", stringsAsFactors=FALSE)
+data <- read.csv("data\\12_meals.csv", stringsAsFactors=FALSE)
 meals <- as_tibble(data)
 meals <- meals %>%
   mutate(tip_percentage = tip / cost)
