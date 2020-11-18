@@ -7,14 +7,15 @@ library("tidyverse")
 library("modelr")
 
 # Read our simple data set
-df <- read_csv("..\\..\\data\\reg_sample.csv")
+df <- read_csv("data\\reg_sample.csv")
 
 # Let's have a look
 ggplot(data=df) +
   geom_point(aes(x=x, y=y),size=3)
 
-
-# define a model family using y = w1 + w2*x (intercept/slope line formula)
+# Seems like their might be a linear relationship between the 
+# x and y variables.
+# Define a model family using y = w1 + w2*x (intercept/slope line formula)
 # model instance - w1, w2
 w1 <- 0
 w2 <- 150
@@ -36,9 +37,10 @@ ggplot(df, aes(x, y)) +
   geom_abline(aes(intercept = w1, slope = w2), data = models, alpha = 1/4) +
   geom_point(size=3) 
 
+# Some look good others look bad -- need a way to evaluate 
+# a model's quality ("goodness").
 
-
-# the model function - takes the model parameters and the x values and
+# The model function - takes the model parameters and the x values and
 # returns the y values
 model1 <- function(w, data) {
   w[1] + data$x * w[2]
@@ -48,8 +50,7 @@ model1 <- function(w, data) {
 model1(c(w1, w2), df)
 
 
-
-# distance measure for a model
+# Create a distance measure for a model
 measure_distance <- function(w, data) {
   diff <- data$y - model1(w, data)
   # RMS
@@ -57,6 +58,7 @@ measure_distance <- function(w, data) {
   # RSS
 #  sum(diff^2)
 }
+
 # sample invocation
 measure_distance(c(w1, w2), df)
 # Want to use measure_distance to measure the distance
@@ -76,6 +78,7 @@ sim1_dist(w1, w2)
 # and store the distance in the tibble
 models <- models %>% 
   mutate(dist = purrr::map2_dbl(w1, w2, sim1_dist))
+# See the models tibble ----->
 
 # Plot the "top 10" best models 
 ggplot(df, aes(x, y)) + 
@@ -84,20 +87,30 @@ ggplot(df, aes(x, y)) +
     aes(intercept = w1, slope = w2, colour = -dist), 
     data = filter(models, rank(dist) <= 10)
   )
+# Looks much better.  Remember, all of the models were
+# randomly generated.
+
 
 # Look at the best 10 models in the model parameter
 # space (w1~w2)
 ggplot(models, aes(w1, w2)) +
   geom_point(data = filter(models, rank(dist) <= 10), size = 4, colour = "red") +
   geom_point(aes(colour = -dist))
+# Looks like the best models are in a relatively small region
+# in the parameter space.
 
 # Let's generate some more models are in the "good area" of the parameter 
-# space and then evalute these models using function
+# space and then evaluate these models using function.  First, let's
+# generate a "grid" of possible w1 and w2 vales and evaluate each
+# using the distance function.
+?expand_grid
 grid <- expand.grid(
   w1 = seq(-300000, 130000, length=25),
   w2 = seq(30, 280, length=25)
 ) %>%
   mutate(dist = purrr::map2_dbl(w1, w2, sim1_dist))
+# Check grid out ------> 625 = 25 by 25.
+
 
 # view the models with the best ones identified in parameter space
 grid %>% 
@@ -159,7 +172,7 @@ ggplot(df, aes(x)) +
   geom_point(aes(y = y)) +
   geom_line(aes(y = pred), data = grid, colour = "red", size = 1)
 
-# Resituals with Modelr
+# Residuals with Modelr
 df <- df %>%
   add_residuals(m)
 
