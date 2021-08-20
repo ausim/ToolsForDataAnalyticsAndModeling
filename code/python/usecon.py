@@ -17,7 +17,7 @@ def show(data, show_data = 0):
 
 # %%
 # Want to read it the data and parse the dates 
-df1 = pd.read_csv('data/10_us_economic_data.csv', parse_dates = ['Month'], index_col=0)
+df1 = pd.read_csv('../../data/10_us_economic_data.csv', parse_dates = ['Month'], index_col=0)
 for col in df1.columns:
     print ("{:} ({:})".format(col,df1[col].dtype))
 
