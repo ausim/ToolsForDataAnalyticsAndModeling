@@ -57,8 +57,33 @@ y = x
 #%%
 x = "The dog ate my homework."
 
+#%%
+# creating a list to define a person
+person = ["Tom Howard", 54, 6.0]
 
+# creating a list of lists to define a team
+people = [
+    ["Tom Howard",          54,  6.0],
+    ["Jane Grimm",          19,  4.9],
+    ["Sam Brown",           25,  6.2],
+    ["Sarah Joan Spade",    26, 5.25],
+    ["Blaine Jones",        62,  5.8],
+    ["Devin Callahan",      32, 5.92],
+]
 
+#%%
+# Using a more human-friendly format
+"The average age of the team members is {:.1f} years.".format(
+    sum([p[1] for p in people])/float(len(people))
+)
+# Created an anoymous object, but did nothing with it.  Note
+# the difference between what you see in Sypder and what you
+# see in Jupyter Lab/Notebook for this same expression.
+
+#%%
+print("The average age of the team members is {:.1f} years.".format(
+    sum([p[1] for p in people])/float(len(people))
+))
 
 
 
