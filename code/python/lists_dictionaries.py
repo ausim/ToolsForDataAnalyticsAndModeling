@@ -58,6 +58,14 @@ y = x
 x = "The dog ate my homework."
 
 #%%
+# Suppose you'd like to estimate the probability of rolling a '7' ...
+#  (true prob. is 6/36=.1667)
+import numpy as np
+obs = 50000
+p = len([r for r in [np.random.randint(1, 7, 2) for i in range(obs)] if sum(r) == 7])/obs
+
+print("Estimate or prob. based on {:,d} samples: {:.4f}".format(obs,p))
+#%%
 # creating a list to define a person
 person = ["Tom Howard", 54, 6.0]
 
@@ -85,13 +93,49 @@ print("The average age of the team members is {:.1f} years.".format(
     sum([p[1] for p in people])/float(len(people))
 ))
 
+#%%
+# Nested dictionaries
+s1 = {
+    'Jane Doe'   : {'ID':'b0001','Gender': 'F','HW1':95,'HW2':87, 'HW3':92,'Exam1': 88,'Exam2':93,'FinalExam':90},
+    'John Blue'  : {'ID':'b0002','Gender': 'M','HW1':55,'HW2':76, 'HW3':89,'Exam1': 77,'Exam2':82,'FinalExam':80},
+    'Kim Tester' : {'ID':'b0003','Gender': 'F','HW1':80,'HW2':75, 'HW3':65,'Exam1': 70,'Exam2':75,'FinalExam':80},
+    'Larry Black': {'ID':'b0004','Gender': 'M','HW1':90,'HW2':90, 'HW3':92,'Exam1': 95,'Exam2':85,'FinalExam':94},
+    'Susan White': {'ID':'b0005','Gender': 'F','HW1':65,'HW2':52, 'HW3':85,'Exam1': 45,'Exam2':80,'FinalExam':82}
+    }
+
+#%% 
+# List of dictionaries
+s2 = [
+    {'Name':'Jane Doe',    'ID':'b0001','Gender': 'F','HW1':95,'HW2':87, 'HW3':92,'Exam1': 88,'Exam2':93,'FinalExam':90},
+    {'Name':'John Blue',   'ID':'b0002','Gender': 'M','HW1':55,'HW2':76, 'HW3':89,'Exam1': 77,'Exam2':82,'FinalExam':80},
+    {'Name':'Kim Tester',  'ID':'b0003','Gender': 'F','HW1':80,'HW2':75, 'HW3':65,'Exam1': 70,'Exam2':75,'FinalExam':80},
+    {'Name':'Larry Black', 'ID':'b0004','Gender': 'M','HW1':90,'HW2':90, 'HW3':92,'Exam1': 95,'Exam2':85,'FinalExam':94},
+    {'Name':'Susan White', 'ID':'b0005','Gender': 'F','HW1':65,'HW2':52, 'HW3':85,'Exam1': 45,'Exam2':80,'FinalExam':82}
+    ]
 
 
+#%%
+# List of lists
+s3 = [
+    ['Jane Doe',    'b0001', 'F', 95, 87, 92, 88, 93, 90],
+    ['John Blue',   'b0002', 'M', 55, 76, 89, 77, 82, 80],
+    ['Kim Tester',  'b0003', 'F', 80, 75, 65, 70, 75, 80],
+    ['Larry Black', 'b0004', 'M', 90, 90, 92, 95, 85, 94],
+    ['Susan White', 'b0005', 'F', 65, 52, 85, 45, 80, 82]
+    ]
 
+#%%
+# compare retrieving the final exam scores:
 
+# Nested dictionaries
+fe1 = [s1[k]['FinalExam'] for k in s1]
 
+# List of dictionaries
+fe2 = [s['FinalExam'] for s in s2]
 
+# list of lists
+fe3 = [r[8] for r in s3]
 
-
-
-
+# Note -- none of these is "right" or "wrong" -- these are three different
+# data structures for the exact same data.  Each has benefits
+# depending on useage.
