@@ -21,6 +21,7 @@ print("Pandas version: {:}".format(pd.__version__))
 print("Curret working directory: {:}".format(os.getcwd()))
 print("Verify the working directory -- might need to update the file path.")
 
+
 # Some sample datasets - all from the source above.
 # Dictionary - key:actual file name
 fnames = {
@@ -44,8 +45,8 @@ fnames = {
 
 # %%
 # Grab a data set using the key and show the first few rows
-fkey = "cities"
-fpath = "data/"
+fkey = "ervs"
+fpath = "../../data/"
 df = pd.read_csv(fpath+fnames[fkey])
 show(df)
 
