@@ -11,7 +11,7 @@ library(tidyverse)
 
 # MPG Dataset ----
 # use ? to get help.  Consider a dataset (e.g., mpg), ?mpg gives
-# a help page
+# a help page.  Note that this dataset is part of ggplot2
 ?mpg
 
 mpg # to show the first 10 rows + information
@@ -86,14 +86,22 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = class)) +
 
 # The iris dataset
 ?iris
+# Note that this is part of the built-in R datasets in the datasets library
+# Convert the dataset to a tibble
 tiris <- as_tibble(iris) 
+
+ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Petal.Width)) +
+  geom_point(mapping = aes(color = Species))
+
+# or flipping x and y
+ggplot(data = tiris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
+  geom_point(mapping = aes(color = Species))
+
 
 # other built-in data sets?
 ?datasets
 library(help = "datasets")
 
-ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Petal.Width)) +
-  geom_point(mapping = aes(color = Species))
 
 # 
 # facets
@@ -148,6 +156,11 @@ ggplot(data = mpg) +
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
   geom_smooth(method = "glm") +
   geom_point(mapping = aes(color = class))
+
+# the iris dataset
+ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length, color=Species))+
+  geom_point(shape=1) +
+  geom_smooth(method=glm)
 
 # divide by drv and use different line types.
 ggplot(data = mpg) + 
