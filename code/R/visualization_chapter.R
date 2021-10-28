@@ -9,20 +9,43 @@ library(tidyverse)
 # install.packages("tidyverse")
 # and retry the library() function.
 
+# 
+# Grab a couple of datasets
+#
+
 # MPG Dataset ----
 # use ? to get help.  Consider a dataset (e.g., mpg), ?mpg gives
 # a help page.  Note that this dataset is part of ggplot2
 ?mpg
 
 mpg # to show the first 10 rows + information
-# What is a tibble?  type 'tibble' and the look for the context menu
+# What is a tibble?  Type 'tibble' in the consoleand the look for the context menu
+vignette("tibble")
+# Also, chapter 10 of the R for Data Science book (a very short chapter)
 
 # View/Edit in grid format and add to the environment (------>)
 # Note that you can edit existing values and add new 
 # values using this method.
 fix(mpg)
 
+# The iris dataset
+?iris
+# Note that this is part of the built-in R datasets in the datasets library
+# Convert the dataset to a tibble
+tiris <- as_tibble(iris) 
+# Note that since mpg was part of ggplot2, it was already stored as a tibble,
+# so no conversion was necessary
+
+# other built-in data sets?
+?datasets
+library(help = "datasets")
+
+
+#
 # Scatter plots -----
+#
+# First with the MPG dataset
+#
 # Start with a question: Is there a relationship between engine size and gas mileage?
 # Try a basic scatter plot:
 ggplot(data = mpg) + 
@@ -30,13 +53,19 @@ ggplot(data = mpg) +
 
 # help again - note the question mark in front of the function name
 ?ggplot()
-# PPTX Slide with Graphing Template
+#
+# PPTX Slide with Graphing Template - and description of the Grammar of
+# Graphics
 
 # color the dots by class (a new variable from the data).  Note that
 # the color parameter is inside the aesthetic function here
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, color = class))
+# ggplot2 did the mapping between plot color and vehicle class and
+# created a legend.
+#
 # Does this help the plot?  Hurt the plot?
+
 
 # What about city mileage?
 ggplot(data = mpg) + 
@@ -45,7 +74,7 @@ ggplot(data = mpg) +
 # plots using the forward/backward arrows (no need to regenerate
 # as long as you are in the same session)
 
-# use dot size
+# use dot size based on vehicle class
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, size = class))
 # Note the warning about using size for a discrete variable.
@@ -83,13 +112,13 @@ ggplot(data = mpg) +
 # geoms.
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = class)) + 
   geom_point()
+# We will see how this is helpful soon.
 
-# The iris dataset
-?iris
-# Note that this is part of the built-in R datasets in the datasets library
-# Convert the dataset to a tibble
-tiris <- as_tibble(iris) 
-
+#
+# Now with the iris dataset
+#
+# Is there a relationship between Petal Width and Petal Length? Does 
+# the relationship depend on species?
 ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Petal.Width)) +
   geom_point(mapping = aes(color = Species))
 
@@ -97,14 +126,18 @@ ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Petal.Width)) +
 ggplot(data = tiris, mapping = aes(x = Petal.Width, y = Petal.Length)) +
   geom_point(mapping = aes(color = Species))
 
+# add size
+ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Petal.Width, size=Petal.Width)) +
+  geom_point(mapping = aes(color = Species))
 
-# other built-in data sets?
-?datasets
-library(help = "datasets")
+# changing variables -- Sepal.Length now
+ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Sepal.Length)) +
+  geom_point(mapping = aes(color = Species))
+
 
 
 # 
-# facets
+# facets - same plot for different subsets of the data
 #
 # single variable (the "formula" in R-speak)
 ggplot(data = mpg) + 
@@ -125,7 +158,7 @@ ggplot(data = mpg) +
 # Geoms -- Geometric objects
 #
 # compare the smooth geom with the point geom earlier -- note
-# that the aes() is the same.
+# that the aesthetic (aes()) is the same.
 ggplot(data = mpg) + 
   geom_smooth(mapping = aes(x = displ, y = hwy))
 
@@ -139,12 +172,17 @@ ggplot(data = mpg) +
 ggplot(data = mpg) + 
   geom_smooth(mapping = aes(x = displ, y = hwy)) +
   geom_point(mapping = aes(x = displ, y = hwy, color = class))
+# note that this is a fundamental ggplot2 concept - define
+# the plot first and then sequentially add layers.
+
 
 # here's where it's convenient to define part
-# of the mapping in the initial ggplot function call
+# of the mapping in the initial ggplot function call so
+# that you don't have to replicate it with each geom.
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
   geom_smooth() +
   geom_point(mapping = aes(color = class))
+
 
 # let's try a generalized linear model (glm)
 # Note that the method parameter is outside of the aes -- it's part of
@@ -157,9 +195,14 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
   geom_smooth(method = "glm") +
   geom_point(mapping = aes(color = class))
 
-# the iris dataset
+# the iris dataset divided by species
 ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length, color=Species))+
-  geom_point(shape=1) +
+  geom_point() +
+  geom_smooth(method=glm)
+# note that the color component rather than the point layer.  If we switch
+# it, we get a single geom_smooth object
+ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length))+
+  geom_point( mapping=aes(color=Species)) +
   geom_smooth(method=glm)
 
 # divide by drv and use different line types.
@@ -209,12 +252,21 @@ ggplot(data = filter(mpg, drv == 'f'),
 # Statistical transformations - for the previous plots, we
 # were plotting the data "as is" with different aesthetics.
 # Now let's look and some aggregation/transformations.
+#
+# ---------------------------------
 
 # First, a new data set ...
 diamonds
 
+# if we want to have the dataset in the environment -->
+fix(diamonds)
+
+# histogram by diamond cut
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut))
+# Looking in the dataset, there is no "count" field -- statistical transformation
+# Check the Powerpoint for the Stats slide.
+
 
 # if you prefer proportions ... DEPRECATED VERSION
 #ggplot(data = diamonds) + 
@@ -272,6 +324,9 @@ ggplot(data = diamonds) +
 ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
   geom_boxplot()
 
+ggplot(data = tiris, mapping = aes(x = Species, y = Petal.Length)) + 
+  geom_boxplot()
+  
 ggplot(data = diamonds, mapping = aes(x = cut, y = price)) + 
   geom_boxplot()
 
@@ -284,4 +339,44 @@ ggplot(data = mpg, mapping = aes(x = class, y = hwy)) +
 ggplot(data = diamonds, mapping = aes(x = cut, y = price)) + 
   geom_boxplot(color="blue", fill="orange") +
   coord_flip()
+
+
+# Store the plot and apply coord modifications
+bar <- ggplot(data = diamonds) + 
+  geom_bar(
+    mapping = aes(x = cut, fill = cut), 
+    show.legend = FALSE,
+    width = 1
+  ) + 
+  theme(aspect.ratio = 1) +
+  labs(x = NULL, y = NULL)
+
+bar + coord_flip()
+bar + coord_polar()
+
+
+#
+# Uinsg latitude and longitude on a map.
+# 
+usa <- map_data("usa")
+
+ggplot(usa, aes(long, lat, group = group)) +
+  geom_polygon(fill = "white", colour = "black") +
+  coord_quickmap()
+
+#
+# add something interesting to the map
+#
+schools <- tibble(
+  school   = c( 'Auburn', 'Penn State',    'TAMU',  'GaTech'),
+  lat      = c(32.609077,    40.790703, 30.622374,  33.74831),
+  long     = c( -85.8173,   -77.858795, -96.32585, -84.39111),
+  students = c(    30460,        46810,     72982,     36302),
+  group = 1
+  )
+
+ggplot(usa, aes(long, lat, group = group)) +
+  geom_polygon(fill = "white", colour = "black") +
+  coord_quickmap() +
+  geom_point(data = schools, aes(x = long, y = lat, color=school, size = students))
 

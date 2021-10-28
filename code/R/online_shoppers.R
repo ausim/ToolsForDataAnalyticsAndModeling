@@ -14,7 +14,7 @@ str(data)
 summary(data)
 
 
-# Records from Operating System 4
+# Records from Operating System 4 (including a subset of columns)
 os4 <- data[data$OperatingSystems == 4,c("Index", "BounceRates", "ExitRates","Weekend","Revenue")]
 
 # Use Tidyverse for some visualization
