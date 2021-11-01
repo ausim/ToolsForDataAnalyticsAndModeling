@@ -19,7 +19,7 @@ library(tidyverse)
 ?mpg
 
 mpg # to show the first 10 rows + information
-# What is a tibble?  Type 'tibble' in the consoleand the look for the context menu
+# What is a tibble?  Type 'tibble' in the console and the look for the context menu
 vignette("tibble")
 # Also, chapter 10 of the R for Data Science book (a very short chapter)
 
@@ -78,18 +78,22 @@ ggplot(data = mpg) +
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, size = class))
 # Note the warning about using size for a discrete variable.
+# Try displacement instead
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = displ))
+
 
 # What if we flip the x and size?
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = class, y = hwy, size = displ))
 # Is this a "good" plot?  What does "good" mean in this sense?
 
-# use size and color
+# use size and color - note the city mileage variable (cty)
 ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = displ, y = hwy, size = class, color=class))
+  geom_point(mapping = aes(x = displ, y = hwy, size = cty, color=class))
 
 ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = class, y = hwy, size = displ, color=displ))
+  geom_point(mapping = aes(x = class, y = hwy, size = cty, color=displ))
 
 # use transparency (alpha)
 ggplot(data = mpg) + 
@@ -140,13 +144,23 @@ ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Sepal.Length)) +
 # facets - same plot for different subsets of the data
 #
 # single variable (the "formula" in R-speak)
+# start with the original ...
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+# and add facet
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy)) + 
   facet_wrap(~ class)
 
+# Iris dataset
 ggplot(data = tiris) +
   geom_point(mapping = aes(x = Sepal.Length, y = Petal.Length)) +
   facet_wrap(~ Species)
+# add color
+ggplot(data = tiris) +
+  geom_point(mapping = aes(x = Sepal.Length, y = Petal.Length, color = Sepal.Width)) +
+  facet_wrap(~ Species)
+
 # facets should be discrete
 
 # two variables (grid rather than wrap)
@@ -159,6 +173,10 @@ ggplot(data = mpg) +
 #
 # compare the smooth geom with the point geom earlier -- note
 # that the aesthetic (aes()) is the same.
+# start with the original ...
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+# and change to the new aes
 ggplot(data = mpg) + 
   geom_smooth(mapping = aes(x = displ, y = hwy))
 
@@ -199,12 +217,18 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
 ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length, color=Species))+
   geom_point() +
   geom_smooth(method=glm)
-# note that the color component rather than the point layer.  If we switch
-# it, we get a single geom_smooth object
+# note that the color component is in the global data
+# definition rather than the point layer - so it applies to both geoms
+# If we switch to the point geom, we get a single geom_smooth object with colored points
 ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length))+
   geom_point( mapping=aes(color=Species)) +
   geom_smooth(method=glm)
+# and if we switch it to the smooth geom, we get non-colored points
+ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length))+
+  geom_point() +
+  geom_smooth(mapping=aes(color=Species), method=glm)
 
+# back to mpg
 # divide by drv and use different line types.
 ggplot(data = mpg) + 
   geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
@@ -240,7 +264,7 @@ ggplot(data = mpg[mpg$drv == 'f',],
   geom_smooth(method="glm", se=FALSE) +
   geom_point()
 
-# or of your prefer the dplyr approach
+# or of your prefer the dplyr approach (which we'll see next week)
 ggplot(data = filter(mpg, drv == 'f'), 
        mapping = aes(x = displ, y = hwy, color = drv)) + 
   geom_smooth(method="glm", se=FALSE) +
