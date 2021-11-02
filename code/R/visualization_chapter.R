@@ -10,7 +10,7 @@ library(tidyverse)
 # and retry the library() function.
 
 # 
-# Grab a couple of datasets
+# Grab a few datasets
 #
 
 # MPG Dataset ----
@@ -39,6 +39,13 @@ tiris <- as_tibble(iris)
 # other built-in data sets?
 ?datasets
 library(help = "datasets")
+
+# Some "local data" -- Auburn Real Estate from 2017.  Note that
+# we are reading this one directly from a csv file
+aure <- read_csv("data\\au_real_estate_2017_anon.csv")
+
+# structure of the data
+str(aure)
 
 
 #
@@ -138,6 +145,11 @@ ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Petal.Width, size=Petal
 ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Sepal.Length)) +
   geom_point(mapping = aes(color = Species))
 
+# 
+# The Auburn real estate dataset
+#
+ggplot(data = aure) + 
+  geom_point(mapping = aes(x = SqFt, y = Price))
 
 
 # 
@@ -169,7 +181,7 @@ ggplot(data = mpg) +
   facet_grid(drv ~ cyl)
 
 #
-# Geoms -- Geometric objects
+# Geoms -- Geometric objects beyond "points"
 #
 # compare the smooth geom with the point geom earlier -- note
 # that the aesthetic (aes()) is the same.
@@ -237,7 +249,9 @@ ggplot(data = mpg) +
 ggplot(data = mpg) + 
   geom_smooth(mapping = aes(x = displ, y = hwy, linetype = class))
 
-# What about some filtering -- and turn off the confidence estimates
+# What about some filtering -- and turn off the confidence estimates.
+# Note that with the filtering, we are treating the tibble just
+# like we would a data.frame.
 ggplot(data = mpg[mpg$class %in% c('compact', 'subcompact'),]) + 
   geom_smooth(mapping = aes(x = displ, y = hwy, linetype = class), se=FALSE)
 
@@ -279,7 +293,12 @@ ggplot(data = filter(mpg, drv == 'f'),
 #
 # ---------------------------------
 
-# First, a new data set ...
+# House prices in Auburn (from 2017)
+ggplot(data = aure) +
+  geom_histogram(mapping = aes(x = Price), binwidth = 50000)
+# we'll see more of this dataset later
+
+# Next, a new data set ...
 diamonds
 
 # if we want to have the dataset in the environment -->
@@ -288,7 +307,7 @@ fix(diamonds)
 # histogram by diamond cut
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut))
-# Looking in the dataset, there is no "count" field -- statistical transformation
+# Looking in the two datasets, there is no "count" field -- statistical transformation
 # Check the Powerpoint for the Stats slide.
 
 
@@ -380,7 +399,9 @@ bar + coord_polar()
 
 
 #
-# Uinsg latitude and longitude on a map.
+# Using latitude and longitude on a map.  You'll need
+# the maps package here -- install.packages("maps") if 
+# you don't already have it.
 # 
 usa <- map_data("usa")
 
@@ -389,7 +410,8 @@ ggplot(usa, aes(long, lat, group = group)) +
   coord_quickmap()
 
 #
-# add something interesting to the map
+# Add something interesting to the map - Schools where 
+# I've gone and/or worked.
 #
 schools <- tibble(
   school   = c( 'Auburn', 'Penn State',    'TAMU',  'GaTech'),
