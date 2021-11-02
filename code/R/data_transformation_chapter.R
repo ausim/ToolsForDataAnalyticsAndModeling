@@ -25,15 +25,8 @@ ncol(nycflights13::flights)           # number of columns
 # So it's a relatively large data set of real data
 
 #
-# Using dplyr
-#
-# Filter ----------------------------------------------------------
-# Create a new data frame with the january 1 flights
-(jan1 <- filter(flights, month == 1, day == 1))
-# note that the outer () mean to print after the assignment
-
-
 # Seems out of place -- but important.    
+#
 # Comparisons -- floating point == can be problematic
 sqrt(2)^2 == 2
 1/49 * 49 == 1
@@ -41,23 +34,26 @@ sqrt(2)^2 == 2
 near(sqrt(2)^2, 2)
 near(1/49*49, 1)
 
+
+#
+# Using dplyr
+#   filter, arrange, select, mutate/transmutate, summarize, group_by
+#
+# Filter ----------------------------------------------------------
+#
+# Create a new tibble with the January 1 flights
+jan1 <- filter(flights, month == 1, day == 1)
+# show the tibble
+jan1
+# note that if you enclose the statement in (),
+# the resulting tibble will be printed after creation (a shortcut)
+(jan1 <- filter(flights, month == 1, day == 1))
+
 # The conditions below are equivalent -- use the format
 # that is clearer to you!
 (nov_dec <- filter(flights, month == 11 | month == 12))
 (nov_dec <- filter(flights, month %in% c(11, 12)))
 # don't use "month == 11 | 12" --- why?  Test it out!
-
-# suppose you want to know how many flights from august
-# had departure delays of more that 2 hours
-# month == 8 and dep_delay > 120 is the condition
-(aug_baddies <- filter(flights, month == 8 & dep_delay > 120))
-
-# Note the following version uses two conditions rather than
-# a single condition involving an 'and' operator.
-(aug_baddies1 <- filter(flights, month == 8, dep_delay > 120))
-
-# Note that filter() excludes NA values in addition to FALSE
-# values.  So there is no need to use omit.na() or similar functions.
 
 #
 # For comparison, suppose you wanted these two filter operations
@@ -72,8 +68,22 @@ sum(mask)
 # the sum result should be the number of rows in the dataframe.  Why?
 
 
+#
 # August late departures
 #
+# Suppose you want to know how many flights from august
+# had departure delays of more that 2 hours
+# month == 8 and dep_delay > 120 is the condition
+(aug_baddies <- filter(flights, month == 8 & dep_delay > 120))
+
+# Note the following version uses two conditions rather than
+# a single condition involving an 'and' operator.
+(aug_baddies1 <- filter(flights, month == 8, dep_delay > 120))
+
+# Note that filter() excludes NA values in addition to FALSE
+# values.  So there is no need to use omit.na() or similar functions.
+
+# Using standard R rather than dplyr
 # try counting them first
 sum(flights$month == 8 & flights$dep_delay > 120)
 aug_baddies2 = flights[flights$month == 8 & flights$dep_delay > 120,]
@@ -117,12 +127,12 @@ arrange(flights, desc(day), month)
 #
 # Select ----------------------------------------------------------
 #
-# Select specific columns
+# Select specific columns Note that a new tibble is returned
 select(flights, year, month, day, dep_time)
 
 select(arrange(flights, desc(day)), day, month, dep_time)
 
-# helper functions
+# helper functions for selecting columns
 select(flights, starts_with("arr"))
 select(flights, ends_with("time"))
 select(flights, contains("dep"))
@@ -160,9 +170,14 @@ transmute(flights,
 #
 summarise(flights, delay=mean(dep_delay, na.rm = TRUE))
 
+summarise(flights, 
+          delay=mean(dep_delay, na.rm = TRUE), 
+          distance=mean(distance, na.rm = TRUE)
+          )
+
 # Group the flights by day
 by_day <- group_by(flights, year, month, day)
-
+# sumarize the group
 summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
 # So, what is the by_day object -- In the environment, it looks just like bad_flights
 class(by_day)
@@ -189,7 +204,7 @@ s <- summarize(by_dest,
 # consider this sample analysis
 # Group by destination
 by_dest <- group_by(flights, dest)
-# Sumarize teh number of flights, mean distance, and mean delay
+# Sumarize the number of flights, mean distance, and mean delay
 delay <- summarise(by_dest,
                    count = n(),
                    dist = mean(distance, na.rm = TRUE),
@@ -250,6 +265,8 @@ print(getwd())
 # Read the meals data and create a tibble
 data <- read.csv("data\\12_meals.csv", stringsAsFactors=FALSE)
 meals <- as_tibble(data)
+# or read and create the tibble directly (note the '_' vs '.' in the function call)
+meals <- read_csv("data\\12_meals.csv")
 
 # Compute the tip percentage
 meals <- meals %>%
@@ -269,7 +286,7 @@ summarize(meals, count=n(),
 
 # By day: we could filter
 meals %>%
-  filter(day == "Fri") %>%
+  filter(day == "Mon") %>%
   summarize(count=n(), 
             avg_tip=mean(tip, na.rm=TRUE),
             avg_cost=mean(cost, na.rm = TRUE),
@@ -311,7 +328,9 @@ meals %>%
     total_people = sum(party_size, na.rm = TRUE)
   ))
 
+#
 # Diamond data set -------------------------------
+#
 diamonds
 
 # by cut
