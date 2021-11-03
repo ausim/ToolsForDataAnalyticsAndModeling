@@ -293,9 +293,10 @@ ggplot(data = filter(mpg, drv == 'f'),
 #
 # ---------------------------------
 
-# House prices in Auburn (from 2017)
-ggplot(data = aure) +
-  geom_histogram(mapping = aes(x = Price), binwidth = 50000)
+# Count by bedrooms for Auburn 
+ggplot(data = aure) + 
+  geom_bar(mapping = aes(x = Bedrooms))
+
 # we'll see more of this dataset later
 
 # Next, a new data set ...
@@ -355,6 +356,19 @@ ggplot(data = diamonds) +
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge")
 
+#
+# Histograms -----
+#
+# House prices in Auburn (from 2017)
+ggplot(data = aure) +
+  geom_histogram(mapping = aes(x = Price))
+# change the binwidth
+ggplot(data = aure) +
+  geom_histogram(mapping = aes(x = Price), binwidth = 50000)
+
+# Diamond prices
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = price))
 
 # Some additional examples in online_shoppers.R
 
@@ -377,6 +391,11 @@ ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
 ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
   geom_boxplot() +
   coord_flip()
+
+ggplot(data = aure, mapping = aes(y = Price)) + 
+  geom_boxplot() +
+  coord_flip()
+
 
 # Colorful boxplot ...
 ggplot(data = diamonds, mapping = aes(x = cut, y = price)) + 
