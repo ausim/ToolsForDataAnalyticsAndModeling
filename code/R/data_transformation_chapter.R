@@ -141,7 +141,7 @@ arrange(flights, desc(day), month)
 #
 # Select ----------------------------------------------------------
 #
-# Select specific columns Note that a new tibble is returned
+# Select specific columns. Note that a new tibble is returned
 select(flights, year, month, day, dep_time)
 
 select(arrange(flights, desc(day)), day, month, dep_time)
@@ -154,13 +154,15 @@ select(flights, contains("dep"))
 #
 # Mutate ----------------------------------------------------------
 # Adding new columns
-# Create a new tibble with selected columns
-flights_sml <- select(flights, 
+# Create a new tibble with selected columns.  Note the 
+# use of spacing/newlines to improve readability
+(flights_sml <- select(flights, 
   year:day, 
   ends_with("delay"), 
   distance, 
   air_time
-)
+))
+# Note the 'year:day' - all columns between the two
 # Add some new computed columns
 mutate(flights_sml,
   gain = dep_delay - arr_delay,
@@ -170,6 +172,7 @@ mutate(flights_sml,
 )
 # Check the environment ----> We mutate doesn't change
 # the data frame -- it returns the mutated data frame.
+# Standard behavior for dplyr
 
 # Use transmute if you only want the new columns
 transmute(flights,
@@ -182,6 +185,7 @@ transmute(flights,
 #
 # Sumarise and Group By ----------------------------------------------------------
 #
+# First, sumarize over the entire dataset
 summarise(flights, delay=mean(dep_delay, na.rm = TRUE))
 
 summarise(flights, 
@@ -199,7 +203,7 @@ class(flights)
 ?group_by # Ah, creates a "grouped tibble"
 
 # to save the daily summaries from above:
-daily_summaries <- summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
+(daily_summaries <- summarise(by_day, delay = mean(dep_delay, na.rm = TRUE)))
 # sort by badness 
 arrange(daily_summaries, desc(delay))
 
@@ -263,7 +267,7 @@ ggplot(data = delay1, mapping = aes(x = dist, y = delay)) +
   filter(num > 5000) %>%
   mutate(tot = num * dist) %>%
   arrange(desc(num)))
-
+# flights then group_by then sumarize then filter then mutate then arrange
 #
 # Practice, practice, practice.  Ask a question, then formulate
 # the dyplyr statement to generate "the answer"
@@ -283,8 +287,8 @@ meals <- as_tibble(data)
 meals <- read_csv("data\\12_meals.csv")
 
 # Compute the tip percentage
-meals <- meals %>%
-  mutate(tip_percentage = tip / cost)
+(meals <- meals %>%
+  mutate(tip_percentage = tip / cost))
 # Note that the mutate operation did not update 
 # the meals tibble, but the assignment overwrote the
 # the previous version, so the net effect was updating
@@ -298,9 +302,11 @@ summarize(meals, count=n(),
          total_people = sum(party_size, na.rm = TRUE)
          )
 
+# what days?
+unique(meals$day)
 # By day: we could filter
 meals %>%
-  filter(day == "Mon") %>%
+  filter(day == "Wed") %>%
   summarize(count=n(), 
             avg_tip=mean(tip, na.rm=TRUE),
             avg_cost=mean(cost, na.rm = TRUE),

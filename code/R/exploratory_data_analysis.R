@@ -6,7 +6,7 @@
 library("tidyverse")
 
 # Read in and add some new variables
-aure <- read_csv("data\\au_real_estate_2017_anon.csv")
+(aure <- read_csv("data\\au_real_estate_2017_anon.csv"))
 
 # structure of the data
 str(aure)
@@ -22,6 +22,7 @@ aure <- aure %>%
 # PTypes: C - Condo; H - ?; N - New Construction; O - First right of refusal
 #   P - Proposed; R - Residential; S - ?; T - Townhome
 # Shouldn't be any 'O' or 'P' values -- someone didn't update.
+unique(aure$PType)
 
 #
 # Variation Samples -------------------------------------------
@@ -31,14 +32,21 @@ ggplot(data = aure) +
   geom_histogram(mapping = aes(x = Price), binwidth = 50000) +
   geom_vline(xintercept=mean(aure$Price), color="red") + 
   geom_vline(xintercept=median(aure$Price), color="blue") 
-  
-  
+# Note the vline geoms overlaying the mean and median prices on the histogram.
+
+# or if you prefer the distribution estimate
 ggplot(data = aure) +
-  geom_freqpoly(mapping = aes(x = Price), binwidth = 50000, size=1.5, color="orange")
+  geom_freqpoly(mapping = aes(x = Price), binwidth = 50000, size=1.5, color="orange") +
+  geom_vline(xintercept=mean(aure$Price), color="red") + 
+  geom_vline(xintercept=median(aure$Price), color="blue") 
 
 # Property type bar chart
 ggplot(data = aure) +
   geom_bar(mapping = aes(x=PType))
+# or if you prefer proportions
+ggplot(data = aure) +
+  geom_bar(mapping = aes(x=PType, y=stat(prop), group=1))
+
 
 # Property sizes histogram
 ggplot(data = aure) +
@@ -68,11 +76,10 @@ ggplot(data = aure) +
 filter(aure, DaysOnMarket < 0)
 # Yep -- another mental note.
 # Also looks like a significant outlier ....
-# may need in install the pillar package here ...
 filter(aure, DaysOnMarket > 2000)
 # that's close to 10 YEARS on the market
 
-# Let's try it without the big outlier and add the median in addition 
+# Let's try it without the big outlier and add the median to the plot 
 # to the mean
 ggplot(data = filter(aure, DaysOnMarket > 0, DaysOnMarket < 1000)) +
   geom_histogram(mapping = aes(x = DaysOnMarket)) +
@@ -88,7 +95,7 @@ ggplot(data = filter(aure, DaysOnMarket > 0, DaysOnMarket < 365)) +
   geom_vline(xintercept=median(filter(aure, DaysOnMarket > 0, DaysOnMarket < 365)$DaysOnMarket), color="blue")
 # Note that these outliers may not be data errors.  In this particular case,
 # the big outlier is not an error -- but I only know this because I checked
-# with other sources to find it.
+# with other sources to find out for sure.  You can't tell this from the data alone.
 
 
 #
@@ -101,6 +108,7 @@ ggplot(data = filter(aure, Bedrooms < 5)) +
   geom_histogram(mapping = aes(x = Price, y=..count../sum(..count..)), binwidth = 50000) +
   geom_vline(xintercept=median(filter(aure, Bedrooms < 5)$Price), color="red") +
   facet_wrap(~NBed)
+
 # Price by bedrooms and bathrooms
 ggplot(data = filter(aure, Bedrooms < 5, Baths < 5)) +
   geom_histogram(mapping = aes(x = Price, y=..count../sum(..count..), fill=NBed), binwidth = 50000) +
@@ -188,7 +196,7 @@ summarise(aure, num=n(),
           dom1=median(DaysOnMarket))
 
 # By Subdivision- group and summarize 
-subdivision <- aure %>%
+(subdivision <- aure %>%
   group_by(Subdivision) %>%
   summarize(
     num = n(),
@@ -199,7 +207,7 @@ subdivision <- aure %>%
     avg_dom = mean(DaysOnMarket), 
     med_dom = median(DaysOnMarket)
   ) %>%
-  arrange(desc(num))
+  arrange(desc(num)))
 
 # which subdivsions sell?
 ggplot(data = subdivision) +
@@ -207,23 +215,27 @@ ggplot(data = subdivision) +
 # filter down
 ggplot(data = filter(subdivision, num > 20)) +
   geom_col(mapping = aes(x=Subdivision, y=num))
-# Median price by subdivision?
-ggplot(data = subdivision) +
-  geom_col(mapping = aes(x=Subdivision, y=med_price))
+# flip to see the subdivisions
 ggplot(data = filter(subdivision, num > 20)) +
-  geom_col(mapping = aes(x=Subdivision, y=med_price))
+  geom_col(mapping = aes(x=Subdivision, y=num)) +
+  coord_flip()
+
+# Median price by subdivision?
+ggplot(data = filter(subdivision, num > 20)) +
+  geom_col(mapping = aes(x=Subdivision, y=med_price)) +
+  coord_flip()
 
 
 # Transactions by firm
 # Agency Production - Note that I created the
 # new tibble here rather than using the pipe as above.
 by_agency <- group_by(aure, Firm)
-agency_prodn <- summarize(by_agency, 
+(agency_prodn <- summarize(by_agency, 
                           num=n(),
                           dollars = sum(Price), 
                           dom=mean(DaysOnMarket), 
                           dom1=median(DaysOnMarket)) %>% 
-  arrange(desc(num))
+  arrange(desc(num)))
 
 # Transactions by firm
 ggplot(data = agency_prodn) +
@@ -240,12 +252,12 @@ ggplot(data = filter(agency_prodn, num > 50)) +
 
 # Agent Production
 by_agent <- group_by(aure, Agent)
-agent_prodn <- summarize(by_agent, 
+(agent_prodn <- summarize(by_agent, 
                          num=n(), 
                          dollars = sum(Price), 
                          dom=mean(DaysOnMarket), 
                          dom1=median(DaysOnMarket)) %>% 
-  arrange(desc(num))
+  arrange(desc(num)))
 
 # Agent production (dollars) with mean and median
 ggplot(data = agent_prodn) +
@@ -278,10 +290,10 @@ ggplot(data = filter(agency_prodn, dollars < 5000000)) +
 # Meals Tip Data
 #
 # Read the meals data
-data <- read.csv("data\\12_meals.csv", stringsAsFactors=FALSE)
-meals <- as_tibble(data)
-meals <- meals %>%
-  mutate(tip_percentage = tip / cost)
+(meals <- read_csv("data\\12_meals.csv"))
+# add tip percentage
+(meals <- meals %>%
+  mutate(tip_percentage = tip / cost))
 
 # Meals by Day
 ggplot(data = meals) +
