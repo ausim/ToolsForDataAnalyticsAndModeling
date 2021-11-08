@@ -75,10 +75,12 @@ sum(mask)
 # had departure delays of more that 2 hours
 # month == 8 and dep_delay > 120 is the condition
 (aug_baddies <- filter(flights, month == 8 & dep_delay > 120))
+# Note the '&' - specificies an and condition.
 
 # Note the following version uses two conditions rather than
 # a single condition involving an 'and' operator.
 (aug_baddies1 <- filter(flights, month == 8, dep_delay > 120))
+# Here, filter() is handinging condition construction.
 
 # Note that filter() excludes NA values in addition to FALSE
 # values.  So there is no need to use omit.na() or similar functions.
@@ -92,20 +94,29 @@ aug_baddies2 = flights[flights$month == 8 & flights$dep_delay > 120,]
 tmp = flights[complete.cases(flights$dep_delay),]
 aug_baddies2 = tmp[tmp$month == 8 & tmp$dep_delay > 120,]
 ? complete.cases
+# returns a logical vector -- use as a mask
+(another_mask <- complete.cases(flights$dep_delay))
 # so, the filter() method on tibbles excludes FALSE and NA values (and is a
 # bit easier to read.)
 
 
 #
-# To practice, think of an interesting question and develop the 
-# corresponding filter for it ...
+# To practice (and you should), think of an interesting question  
+# and develop the corresponding filter for it ...
 #
+# 
+# Find all of the plane tail numbers
+tn <- unique(flights$tailnum)
+
 # flights by tail number N5CLAA
 n5claa <- filter(flights, tailnum =="N5CLAA")
 
 # flights headed for miami during November, December, January, February
 beach <- filter(flights, dest == 'MIA' & (month %in% c(1, 2, 11, 12)))
+# or using multiple conditions rather than the & (and)
+beach1 <- filter(flights, dest == 'MIA',(month %in% c(1, 2, 11, 12)))
 
+#
 # beach flights that were delayed on arrival for more than 45 minutes
 late_beach <- filter(beach, arr_delay > 45)
 # or
@@ -117,12 +128,15 @@ late_beach <- filter(flights, dest == 'MIA', (month %in% c(1, 2, 11, 12)), arr_d
 # Arrange ----------------------------------------------------------
 #
 # Sort the data -- note that a new tibble is returned, the original is left unchanged
+# (standard behavior for dyplr)
 arrange(flights, year, month, day)
 arrange(flights, desc(day), month)
 
 # if you want to save the sorted values, assign
 (bad_flights <- arrange(flights, desc(dep_delay)))
 
+# details -- note the concept of 'locales' 
+?arrange
 
 #
 # Select ----------------------------------------------------------
