@@ -48,12 +48,27 @@ jan1
 # note that if you enclose the statement in (),
 # the resulting tibble will be printed after creation (a shortcut)
 (jan1 <- filter(flights, month == 1, day == 1))
+#
+# Note here that if we want help, we need to use the fully
+# qualified name since stats::filter also exists
+?dplyr::filter
+# We can also combine the two conditions
+(jan1 <- filter(flights, month == 1 & day == 1))
+
 
 # The conditions below are equivalent -- use the format
 # that is clearer to you!
 (nov_dec <- filter(flights, month == 11 | month == 12))
-(nov_dec <- filter(flights, month %in% c(11, 12)))
 # don't use "month == 11 | 12" --- why?  Test it out!
+# Using the %in% operator
+(nov_dec <- filter(flights, month %in% c(11, 12)))
+#
+# In R, the %in% operator tests whether an element is in a vector or dataframe 
+x <- 1
+x %in% c(1, 2, 3)
+#
+# dplyr filter uses this operator to create a mask for the provided tibble
+flights$month %in% c(11, 12)
 
 #
 # For comparison, suppose you wanted these two filter operations
@@ -75,21 +90,30 @@ sum(mask)
 # had departure delays of more that 2 hours
 # month == 8 and dep_delay > 120 is the condition
 (aug_baddies <- filter(flights, month == 8 & dep_delay > 120))
-# Note the '&' - specificies an and condition.
+# Note the '&' - specifies an and condition.
 
 # Note the following version uses two conditions rather than
 # a single condition involving an 'and' operator.
 (aug_baddies1 <- filter(flights, month == 8, dep_delay > 120))
-# Here, filter() is handinging condition construction.
+# Here, filter() is handling condition construction.
 
-# Note that filter() excludes NA values in addition to FALSE
+# Note also that filter() excludes NA values in addition to FALSE
 # values.  So there is no need to use omit.na() or similar functions.
 
 # Using standard R rather than dplyr
 # try counting them first
 sum(flights$month == 8 & flights$dep_delay > 120)
-aug_baddies2 = flights[flights$month == 8 & flights$dep_delay > 120,]
 # oops -- NA values.  Simple masking could count NA values.
+# Where are they coming from?
+sum(flights$month == 8)
+# ok
+sum(flights$dep_delay > 120)
+# So, the problem is not the combined condition, it's with the missing
+# departure delay values
+# Use the mask to create the dataframe anyway
+aug_baddies2 = flights[flights$month == 8 & flights$dep_delay > 120,]
+# Look in aug_baddies2 and you'll see the NA values.
+
 # first, get rid of the NA values .. don't forget '?complete.cases' for help
 tmp = flights[complete.cases(flights$dep_delay),]
 aug_baddies2 = tmp[tmp$month == 8 & tmp$dep_delay > 120,]
@@ -110,9 +134,15 @@ tn <- unique(flights$tailnum)
 
 # flights by tail number N5CLAA
 n5claa <- filter(flights, tailnum =="N5CLAA")
+# February flights by tail number N5CLAA
+filter(n5claa, month==2)
+# or
+filter(flights, tailnum == "N5CLAA", month == 2)
+# or
+filter(flights, tailnum == "N5CLAA" & month == 2)
 
-# flights headed for miami during November, December, January, February
-beach <- filter(flights, dest == 'MIA' & (month %in% c(1, 2, 11, 12)))
+# flights headed for Miami during November, December, January, February
+(beach <- filter(flights, dest == 'MIA' & (month %in% c(1, 2, 11, 12))))
 # or using multiple conditions rather than the & (and)
 beach1 <- filter(flights, dest == 'MIA',(month %in% c(1, 2, 11, 12)))
 
@@ -142,14 +172,17 @@ arrange(flights, desc(day), month)
 # Select ----------------------------------------------------------
 #
 # Select specific columns. Note that a new tibble is returned
+#
 select(flights, year, month, day, dep_time)
-
+# combining functions
 select(arrange(flights, desc(day)), day, month, dep_time)
 
 # helper functions for selecting columns
 select(flights, starts_with("arr"))
 select(flights, ends_with("time"))
 select(flights, contains("dep"))
+# details
+?select
 
 #
 # Mutate ----------------------------------------------------------
@@ -163,6 +196,7 @@ select(flights, contains("dep"))
   air_time
 ))
 # Note the 'year:day' - all columns between the two
+#
 # Add some new computed columns
 mutate(flights_sml,
   gain = dep_delay - arr_delay,
@@ -173,6 +207,19 @@ mutate(flights_sml,
 # Check the environment ----> We mutate doesn't change
 # the data frame -- it returns the mutated data frame.
 # Standard behavior for dplyr
+
+# Or, all at once
+mutate(
+  select(flights, 
+    year:day, 
+    ends_with("delay"), 
+    distance, 
+    air_time),
+  gain = dep_delay - arr_delay,
+  speed = distance / air_time * 60,
+  hours = air_time / 60,
+  gain_per_hour = gain / hours
+)
 
 # Use transmute if you only want the new columns
 transmute(flights,
@@ -200,13 +247,13 @@ summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
 # So, what is the by_day object -- In the environment, it looks just like bad_flights
 class(by_day)
 class(flights)
+#
 ?group_by # Ah, creates a "grouped tibble"
 
 # to save the daily summaries from above:
 (daily_summaries <- summarise(by_day, delay = mean(dep_delay, na.rm = TRUE)))
 # sort by badness 
 arrange(daily_summaries, desc(delay))
-
 
 # Group by destination, count the number, sort in descending order
 by_dest <- group_by(flights, dest)
@@ -255,7 +302,21 @@ ggplot(data = delay1, mapping = aes(x = dist, y = delay)) +
 # %>% ==> "then"
 # See the pptx slide
 
+# what if we include Honolulu -- and do everything at once:
+# combined 
+ggplot(flights %>% 
+         group_by(dest) %>% 
+         summarise(
+           count = n(),
+           dist = mean(distance, na.rm = TRUE),
+           delay = mean(arr_delay, na.rm = TRUE)
+         ) %>% 
+         filter(count > 20)
+  , mapping = aes(x = dist, y = delay)) +
+  geom_point(aes(size = count), alpha = 1/3) +
+  geom_smooth(se = FALSE)
 
+#
 # Suppose that you want to know the popular destinations and their distances
 #
 (popular_dests <- flights %>%
@@ -269,6 +330,7 @@ ggplot(data = delay1, mapping = aes(x = dist, y = delay)) +
   arrange(desc(num)))
 # flights then group_by then sumarize then filter then mutate then arrange
 #
+
 # Practice, practice, practice.  Ask a question, then formulate
 # the dyplyr statement to generate "the answer"
 #
@@ -277,14 +339,18 @@ ggplot(data = delay1, mapping = aes(x = dist, y = delay)) +
 # Meal example from the Python section of the class ---------------------
 #
 # pptx slide ->
+# 
+# Compare to the Python versions in the Jupyter notebook:
+#    "Meals - Aggregation and Grouping Example.ipynb"
 #
 # Get the current working directory
 print(getwd())
 # Read the meals data and create a tibble
 data <- read.csv("data\\12_meals.csv", stringsAsFactors=FALSE)
 meals <- as_tibble(data)
-# or read and create the tibble directly (note the '_' vs '.' in the function call)
+# or reading them as a tibble directly
 meals <- read_csv("data\\12_meals.csv")
+
 
 # Compute the tip percentage
 (meals <- meals %>%
