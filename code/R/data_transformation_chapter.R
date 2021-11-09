@@ -339,14 +339,18 @@ ggplot(flights %>%
 # Meal example from the Python section of the class ---------------------
 #
 # pptx slide ->
+# 
+# Compare to the Python versions in the Jupyter notebook:
+#    "Meals - Aggregation and Grouping Example.ipynb"
 #
 # Get the current working directory
 print(getwd())
 # Read the meals data and create a tibble
 data <- read.csv("data\\12_meals.csv", stringsAsFactors=FALSE)
 meals <- as_tibble(data)
-# or read and create the tibble directly (note the '_' vs '.' in the function call)
+# or reading them as a tibble directly
 meals <- read_csv("data\\12_meals.csv")
+
 
 # Compute the tip percentage
 (meals <- meals %>%
