@@ -11,15 +11,16 @@ library(nycflights13)
 nycflights13::flights
 # aliased to flights -- can use either
 flights
+# variables in the tibble - Look at the help or:
+colnames(nycflights13::flights)       # columns names
 
-# Some data on the dataset
+# Some other data on the dataset
 class(nycflights13::flights)          # get class
 sapply(nycflights13::flights, class)  # get class of all columns
 # What is this sapply function?
 ?sapply
 str(nycflights13::flights)            # structure
 summary(nycflights13::flights)        # summary
-colnames(nycflights13::flights)       # columns names
 nrow(nycflights13::flights)           # number of rows
 ncol(nycflights13::flights)           # number of columns
 # So it's a relatively large data set of real data
@@ -41,20 +42,31 @@ near(1/49*49, 1)
 #
 # Filter ----------------------------------------------------------
 #
-# Create a new tibble with the January 1 flights
-jan1 <- filter(flights, month == 1, day == 1)
-# show the tibble
-jan1
-# note that if you enclose the statement in (),
+# Filter the January flights - filter with the condition
+# that the month variable is 1 (month == 1)
+filter(flights, month == 1)
+# Note that this creates a new (anonymous) tibble.
+# If you want to save it, you need to assign the result
+jan <- filter(flights, month == 1)
+jan
+# Note that if you enclose the statement in (),
 # the resulting tibble will be printed after creation (a shortcut)
+(jan <- filter(flights, month == 1))
+
+# Create (and show) a new tibble with the January 1 flights
+# Two conditions -- month == 1 and day == 1
 (jan1 <- filter(flights, month == 1, day == 1))
 #
 # Note here that if we want help, we need to use the fully
 # qualified name since stats::filter also exists
 ?dplyr::filter
-# We can also combine the two conditions
+# We can also combine the two conditions into a single
+# condition by using a logical operator
 (jan1 <- filter(flights, month == 1 & day == 1))
 
+#
+# See the pptx slide on Logical Operators (or the book image)
+#
 
 # The conditions below are equivalent -- use the format
 # that is clearer to you!
@@ -64,11 +76,14 @@ jan1
 (nov_dec <- filter(flights, month %in% c(11, 12)))
 #
 # In R, the %in% operator tests whether an element is in a vector or dataframe 
-x <- 1
+x <- 2
 x %in% c(1, 2, 3)
 #
-# dplyr filter uses this operator to create a mask for the provided tibble
+# dplyr filter() uses this operator internally to create 
+# and apply a mask for the provided tibble
 flights$month %in% c(11, 12)
+# and count the TRUE values (should be the size of the tibble)
+sum(flights$month %in% c(11, 12))
 
 #
 # For comparison, suppose you wanted these two filter operations
@@ -80,7 +95,7 @@ flights$month %in% c(11, 12)
 mask = flights$month == 11 | flights$month == 12
 # if you just wanted a count of the flights ...
 sum(mask)
-# the sum result should be the number of rows in the dataframe.  Why?
+# As before, the sum result should be the number of rows in the dataframe.
 
 
 #
@@ -89,9 +104,11 @@ sum(mask)
 # Suppose you want to know how many flights from august
 # had departure delays of more that 2 hours
 # month == 8 and dep_delay > 120 is the condition
+# Option 1:
 (aug_baddies <- filter(flights, month == 8 & dep_delay > 120))
 # Note the '&' - specifies an and condition.
 
+# Option 2:
 # Note the following version uses two conditions rather than
 # a single condition involving an 'and' operator.
 (aug_baddies1 <- filter(flights, month == 8, dep_delay > 120))
@@ -100,10 +117,10 @@ sum(mask)
 # Note also that filter() excludes NA values in addition to FALSE
 # values.  So there is no need to use omit.na() or similar functions.
 
-# Using standard R rather than dplyr
+# Using standard R rather than dplyr - need to mask the dataframe
 # try counting them first
 sum(flights$month == 8 & flights$dep_delay > 120)
-# oops -- NA values.  Simple masking could count NA values.
+# oops -- NA values.  Simple masking could include NA values.
 # Where are they coming from?
 sum(flights$month == 8)
 # ok
@@ -112,6 +129,7 @@ sum(flights$dep_delay > 120)
 # departure delay values
 # Use the mask to create the dataframe anyway
 aug_baddies2 = flights[flights$month == 8 & flights$dep_delay > 120,]
+# Compare aug_baddies and aug_baddies2 in the Environment ---->
 # Look in aug_baddies2 and you'll see the NA values.
 
 # first, get rid of the NA values .. don't forget '?complete.cases' for help
@@ -123,17 +141,16 @@ aug_baddies2 = tmp[tmp$month == 8 & tmp$dep_delay > 120,]
 # so, the filter() method on tibbles excludes FALSE and NA values (and is a
 # bit easier to read.)
 
-
 #
 # To practice (and you should), think of an interesting question  
 # and develop the corresponding filter for it ...
 #
 # 
 # Find all of the plane tail numbers
-tn <- unique(flights$tailnum)
+unique(flights$tailnum)
 
 # flights by tail number N5CLAA
-n5claa <- filter(flights, tailnum =="N5CLAA")
+(n5claa <- filter(flights, tailnum =="N5CLAA"))
 # February flights by tail number N5CLAA
 filter(n5claa, month==2)
 # or
@@ -142,6 +159,7 @@ filter(flights, tailnum == "N5CLAA", month == 2)
 filter(flights, tailnum == "N5CLAA" & month == 2)
 
 # flights headed for Miami during November, December, January, February
+# Condition: destination is Miami and month is 1, 2, 11, or 12
 (beach <- filter(flights, dest == 'MIA' & (month %in% c(1, 2, 11, 12))))
 # or using multiple conditions rather than the & (and)
 beach1 <- filter(flights, dest == 'MIA',(month %in% c(1, 2, 11, 12)))
