@@ -248,9 +248,9 @@ transmute(flights,
 
 
 #
-# Sumarise and Group By ----------------------------------------------------------
+# Summarise and Group By ----------------------------------------------------------
 #
-# First, sumarize over the entire dataset
+# First, summarize over the entire dataset
 summarise(flights, delay=mean(dep_delay, na.rm = TRUE))
 
 summarise(flights, 
@@ -260,7 +260,7 @@ summarise(flights,
 
 # Group the flights by day
 by_day <- group_by(flights, year, month, day)
-# sumarize the group
+# summarize the group
 summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
 # So, what is the by_day object -- In the environment, it looks just like bad_flights
 class(by_day)
@@ -279,7 +279,7 @@ s <- summarize(by_dest,
   num = n(),
   dist = mean(distance, na.rm=TRUE) 
 )
-(s <- arrange(s, desc(num)))
+(s1 <- arrange(s, desc(num)))
 
 #
 # piping - See pptx slide -------------------------
@@ -346,7 +346,7 @@ ggplot(flights %>%
   filter(num > 5000) %>%
   mutate(tot = num * dist) %>%
   arrange(desc(num)))
-# flights then group_by then sumarize then filter then mutate then arrange
+# flights then group_by then summarize then filter then mutate then arrange
 #
 
 # Practice, practice, practice.  Ask a question, then formulate
@@ -390,7 +390,7 @@ summarize(meals, count=n(),
 unique(meals$day)
 # By day: we could filter
 meals %>%
-  filter(day == "Wed") %>%
+  filter(day == "Mon") %>%
   summarize(count=n(), 
             avg_tip=mean(tip, na.rm=TRUE),
             avg_cost=mean(cost, na.rm = TRUE),
