@@ -21,8 +21,20 @@ aure <- aure %>%
   )
 # PTypes: C - Condo; H - ?; N - New Construction; O - First right of refusal
 #   P - Proposed; R - Residential; S - ?; T - Townhome
-# Shouldn't be any 'O' or 'P' values -- someone didn't update.
+# Shouldn't be any 'O' or 'P' values 
 unique(aure$PType)
+# -- someone didn't update.  Let's have a look
+# Property type bar chart
+ggplot(data = aure) +
+  geom_bar(mapping = aes(x=PType))
+# or if you prefer proportions
+ggplot(data = aure) +
+  geom_bar(mapping = aes(x=PType, y=stat(prop), group=1))
+# Could easily remove the values ('O' and 'P') if we wanted
+# See them first
+(bad_recs <- filter(aure, PType == 'O' | PType == 'P'))
+# Make a mental note -- leave them in for now.  Ideally, we would explore
+# further to see what caused the problem.
 
 #
 # Variation Samples -------------------------------------------
@@ -33,19 +45,13 @@ ggplot(data = aure) +
   geom_vline(xintercept=mean(aure$Price), color="red") + 
   geom_vline(xintercept=median(aure$Price), color="blue") 
 # Note the vline geoms overlaying the mean and median prices on the histogram.
+# How did we choose the binwidth for this plot?
 
 # or if you prefer the distribution estimate
 ggplot(data = aure) +
   geom_freqpoly(mapping = aes(x = Price), binwidth = 50000, size=1.5, color="orange") +
   geom_vline(xintercept=mean(aure$Price), color="red") + 
   geom_vline(xintercept=median(aure$Price), color="blue") 
-
-# Property type bar chart
-ggplot(data = aure) +
-  geom_bar(mapping = aes(x=PType))
-# or if you prefer proportions
-ggplot(data = aure) +
-  geom_bar(mapping = aes(x=PType, y=stat(prop), group=1))
 
 
 # Property sizes histogram
@@ -55,6 +61,8 @@ ggplot(data = aure) +
 # Yikes -- a 0-sqft property?  Let's check it out....
 filter(aure, SqFt == 0)
 # Make a mental note that these data exist in our dataset.
+# No binwidth argument here -- why not?
+
 
 # Number of bedrooms/bathrooms
 ggplot(data = aure) +
@@ -195,7 +203,7 @@ summarise(aure, num=n(),
           dom=mean(DaysOnMarket), 
           dom1=median(DaysOnMarket))
 
-# By Subdivision- group and summarize 
+# By Subdivision- group, summarize, order by number of units
 (subdivision <- aure %>%
   group_by(Subdivision) %>%
   summarize(
@@ -208,6 +216,35 @@ summarise(aure, num=n(),
     med_dom = median(DaysOnMarket)
   ) %>%
   arrange(desc(num)))
+
+# By median price
+aure %>%
+    group_by(Subdivision) %>%
+    summarize(
+      num = n(),
+      avg_price = mean(Price),
+      med_price = median(Price),
+      avg_sqft = mean(SqFt),
+      med_sqft = median(SqFt),
+      avg_dom = mean(DaysOnMarket), 
+      med_dom = median(DaysOnMarket)
+    ) %>%
+    arrange(desc(med_price))
+# Outliers -- subdivisions with a single unit - remove them
+aure %>%
+  group_by(Subdivision) %>%
+  summarize(
+    num = n(),
+    avg_price = mean(Price),
+    med_price = median(Price),
+    avg_sqft = mean(SqFt),
+    med_sqft = median(SqFt),
+    avg_dom = mean(DaysOnMarket), 
+    med_dom = median(DaysOnMarket)
+  ) %>%
+  filter(num > 5) %>%
+  arrange(desc(med_price))
+
 
 # which subdivsions sell?
 ggplot(data = subdivision) +
