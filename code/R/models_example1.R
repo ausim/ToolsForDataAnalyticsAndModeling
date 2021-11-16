@@ -91,7 +91,7 @@ measure_distance(c(w1, w2), df)
 # Purrr -----
 # I need a 2-parameter function for purrr -- code
 # so that the sample dataset used automatically (note
-# that df is not a parameter)
+# that df is not a parameter of this function, but is used internally)
 sim1_dist <- function(w1, w2) {
   measure_distance(c(w1, w2), df)
 }
