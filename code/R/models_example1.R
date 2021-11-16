@@ -8,7 +8,7 @@ library("modelr")
 
 # Dataset ------
 # Read our simple data set
-df <- read_csv("data\\reg_sample.csv")
+(df <- read_csv("data\\reg_sample.csv"))
 # Not sure what this is, but it looks like it could be a sample
 # of price vs. sqft data from one of our real estate datasets. 
 
@@ -17,7 +17,7 @@ ggplot(data=df) +
   geom_point(aes(x=x, y=y),size=3)
 
 # First model ------------------
-# Seems like their might be a linear relationship between the 
+# Seems like there might be a linear relationship between the 
 # x and y variables.
 # Define a model family using y = w1 + w2*x (intercept/slope line formula)
 # model instance - w1, w2
@@ -26,6 +26,7 @@ w2 <- 150
 ggplot(df, aes(x, y)) + 
   geom_abline(aes(intercept = w1, slope = w2)) +
   geom_point(size=3) 
+# Note the slope/intercept form for geom_abline
 # So, this model is our "low dimensional summary" of the dataset.
 
 # Random models --------------------
