@@ -75,7 +75,7 @@ model1(c(w1, w2), df)
 
 # Distance metric ------
 # Create a distance measure for a model.  Two 
-# comment distance metrics -- RMS (root-mean-squared)
+# common distance metrics -- RMS (root-mean-squared)
 # and RSS (residual sum-of-squares) -- comment
 # one of the two methods out.
 measure_distance <- function(w, data) {
@@ -89,12 +89,12 @@ measure_distance <- function(w, data) {
 # sample invocation
 measure_distance(c(w1, w2), df)
 # Want to use measure_distance to measure the distance
-# for each of our models (stored in models)
+# for each of our models (stored in the dataframe, models)
 
 # Purrr -----
-# I need a 2-parameter function for purrr -- code
-# so that the sample dataset used automatically (note
-# that df is not a parameter of this function, but is used internally)
+# I need a 2-parameter function for purrr -- code the function
+# so that the sample dataset is used automatically (i.e.,
+# the df is not a parameter of this function, but is used internally)
 sim1_dist <- function(w1, w2) {
   measure_distance(c(w1, w2), df)
 }
@@ -102,12 +102,14 @@ sim1_dist <- function(w1, w2) {
 # sample invocation - same as the measure_distance above.
 sim1_dist(w1, w2)
 
-# Use purrr to run the model function for each model
+# Use purrr to run the model function for each model (row)
 # and store the distance in the tibble (using mutate)
 models <- models %>% 
   mutate(dist = purrr::map2_dbl(w1, w2, sim1_dist))
-# See the models tibble -----> a new column.
+# See the models tibble -----> a new column withe the
+# "goodness measure".
 ?map2_dbl
+
 
 # Plot the "top 10" best models.  How do we pick the 
 # 10 best of our models?
@@ -120,6 +122,9 @@ ggplot(df, aes(x, y)) +
 # Looks much better.  Remember, all of the models were
 # randomly generated.
 
+# to see the top 10
+filter(models, rank(dist) <= 10)
+
 # Look closer at the 10 best models and try to 
 # identify patterns.
 
@@ -131,12 +136,12 @@ ggplot(models, aes(w1, w2)) +
 # in the parameter space.
 
 # Let's generate some more models are in the "good area" of the parameter 
-# space and then evaluate these models using function.  First, let's
-# generate a "grid" of possible w1 and w2 vales and evaluate each
-# using the distance function.
+# space and then evaluate these models using the distance function.  
+# First, let's generate a "grid" of possible w1 and w2 vales and 
+# evaluate each using the distance function.
 ?expand_grid
 grid <- expand.grid(
-  w1 = seq(-250000, 140000, length=25),
+  w1 = seq(-250000, 200000, length=25),
   w2 = seq(40, 250, length=25)
 ) %>%
   mutate(dist = purrr::map2_dbl(w1, w2, sim1_dist))
@@ -178,7 +183,11 @@ best <- optim(c(-500000, 0), measure_distance, data = df)
 best$par
 
 ?optim
+# remember the function call - Optim replicates this in its search
+# process
+measure_distance(c(0, 150), df)
 
+# Plot the best 
 ggplot(df, aes(x, y)) + 
   geom_point(size = 2, colour = "grey30") + 
   geom_abline(intercept = best$par[1], slope = best$par[2])
@@ -213,10 +222,15 @@ grid <- df %>%
 grid <- grid %>%
   add_predictions(m)
 
-# plot the points and the line from the predictions
+# plot the points and the predictions
+ggplot(df, aes(x)) +
+  geom_point(aes(y = y)) +
+  geom_point(aes(y = pred), data = grid, colour = "red", size = 1)
+# or the prediction line
 ggplot(df, aes(x)) +
   geom_point(aes(y = y)) +
   geom_line(aes(y = pred), data = grid, colour = "red", size = 1)
+
 
 # Residuals with Modelr
 df <- df %>%
@@ -227,7 +241,7 @@ df <- df %>%
 ggplot(df, aes(resid)) + 
   geom_freqpoly(binwidth = 50000)
 
-# residuals
+# actual residuals
 ggplot(df, aes(x, resid)) + 
   geom_ref_line(h = 0) +
   geom_point() 
