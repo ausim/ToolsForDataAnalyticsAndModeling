@@ -20,7 +20,8 @@ ggplot(data=df) +
 # Seems like there might be a linear relationship between the 
 # x and y variables.
 # Define a model family using y = w1 + w2*x (intercept/slope line formula)
-# model instance - w1, w2
+#
+# Model instance - select values for w1, w2
 w1 <- 0
 w2 <- 150
 ggplot(df, aes(x, y)) + 
@@ -64,7 +65,8 @@ model1 <- function(w, data) {
 # sample invocation using the previously
 # defined (single values) w1 and w2
 model1(c(w1, w2), df)
-# Note that this assumes that df has x defined.
+# Note that this assumes that the dataframe df has 
+# the variable x defined.
 
 # So now we have the y values from the data (df$y)
 # and the y values predicted by the model.  For
@@ -105,6 +107,7 @@ sim1_dist(w1, w2)
 models <- models %>% 
   mutate(dist = purrr::map2_dbl(w1, w2, sim1_dist))
 # See the models tibble -----> a new column.
+?map2_dbl
 
 # Plot the "top 10" best models.  How do we pick the 
 # 10 best of our models?
@@ -167,15 +170,22 @@ grid <- expand.grid(
 # Could continue this process of systematic refinement
 # as long as you want, but let's look at some other options.
 
+#
 # Best Fit Models -----
+#
+# Optim uses the Newton-Raphson method
 best <- optim(c(-500000, 0), measure_distance, data = df)
 best$par
+
+?optim
 
 ggplot(df, aes(x, y)) + 
   geom_point(size = 2, colour = "grey30") + 
   geom_abline(intercept = best$par[1], slope = best$par[2])
 
+#
 # Fit the best linear model using lm()
+#
 m <- lm( y ~ x, df)
 summary(m)
 # plot the scatter and regression
@@ -187,13 +197,19 @@ ggplot(data=df) +
 coef(m)
 formula(m)
 
+#
 # Predictions ----------------
+#
 # Predictions with Modelr
 # Create a grid with the independent variables
+?data_grid
+#
 grid <- df %>%
   data_grid(x)
 
 # add the predictions from model m
+?add_predictions
+#
 grid <- grid %>%
   add_predictions(m)
 
@@ -216,17 +232,3 @@ ggplot(df, aes(x, resid)) +
   geom_ref_line(h = 0) +
   geom_point() 
 
-#
-# Formulas and Model Families -----
-#
-# Create a tibble with a response (y) and 2 variables (x1, x2)
-# note the 'r' -- tRibble, not tibble
-df <- tribble(
-  ~y, ~x1, ~x2,
-  4, 2, 5,
-  5, 1, 6
-)
-
-model_matrix(df, y ~ x1)
-
-model_matrix(df, y ~ x1 + x2)
