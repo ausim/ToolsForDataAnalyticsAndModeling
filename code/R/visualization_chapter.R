@@ -173,12 +173,25 @@ ggplot(data = tiris) +
   geom_point(mapping = aes(x = Sepal.Length, y = Petal.Length, color = Sepal.Width)) +
   facet_wrap(~ Species)
 
+# 
+# The Auburn real estate dataset
+#
+ggplot(data = aure) + 
+  geom_point(mapping = aes(x = SqFt, y = Price)) +
+  facet_wrap(~ Bedrooms)
+
+
 # facets should be discrete
 
 # two variables (grid rather than wrap)
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy)) + 
   facet_grid(drv ~ cyl)
+
+ggplot(data = aure) + 
+  geom_point(mapping = aes(x = SqFt, y = Price)) +
+  facet_grid(BathsFull ~ Bedrooms)
+
 
 #
 # Geoms -- Geometric objects beyond "points"
