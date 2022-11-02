@@ -86,7 +86,7 @@ z <- 27.5
 z
 is.vector(z); length(z)
 
-
+# c - combine values into a vector
 x <- c(12.2, 17.8, 55.4, 35, 68, 55, 23, 97.6)
 print(x)
 is.vector(x); length(x)

@@ -8,15 +8,21 @@
 # Use the built-in mtcars dataframe
 help(mtcars)
 
-# Some standard infomation functions.
+# Some standard information functions.
 # from http://r-statistics.co/R-Tutorial.html
 # Note that many of these functions take general
-# R objects as arguements -- not only DataFrames.
+# R objects as arguments -- not only DataFrames.
 class(mtcars)  # get class
 sapply(mtcars, class)  # get class of all columns
 str(mtcars)  # structure
 summary(mtcars)  # summary of mtcars
 head(mtcars)  # view the first 6 obs
+#
+# Note the environment --->  mtcars is not there -- it's a internal dataset.
+#
+# Want to see more internal datasets? Execute the next line.
+library(help = "datasets")
+#
 fix(mtcars)  # view spreadsheet like grid - and adds to the environment
 rownames(mtcars)  # row names
 colnames(mtcars)  # columns names
@@ -27,7 +33,9 @@ ncol(mtcars)  # number of columns
 mtcars[5, 3]
 mtcars['Hornet Sportabout', 'disp']
 
+#
 # Column selection
+#
 # slicing ("single bracket") - creates a new data frame
 mtcars[1]
 mtcars["hp"]
@@ -41,8 +49,12 @@ mean(hp);sd(hp)
 # "double brackets"
 wt <- mtcars[[6]] # ---> environment
 mean(wt); sd(wt)
+# or
+mtcars[['wt']]
 
+#
 # row selection
+#
 # Note the trailing comma when row slicing.  Without it, you're requesting
 # a column rather than row slice.
 mtcars['Hornet Sportabout',]
@@ -50,18 +62,24 @@ mtcars['Hornet Sportabout',]
 rows1 <- mtcars['Hornet Sportabout',c(1, 2, 3)]
 rows2 <- mtcars[c(1, 3, 5, 7),]
 
+#
 # logical indexing (masking)
+#
 heavy <- mtcars$wt > 4 # ---> environment
 # Slice the heavy cars
-heavy_cars <- mtcars[heavy,]
+# Note that the parens indicate that we want to print the output also
+(heavy_cars <- mtcars[heavy,])
 # apply the condition directly
-light_cars <- mtcars[mtcars$wt < 2,]
+(light_cars <- mtcars[mtcars$wt < 2,])
 
 # 6-cylinder cars that get better than 20 mpg
 six_twenty <- mtcars[mtcars$mpg > 20 & mtcars$cyl == 6,]
 
+# Remenber this is a mask operation --- the mask
+(mask <- mtcars$mpg > 20 & mtcars$cyl == 6)
+
 # more than 250 HP - don't forget that trailing comma!
-big_boys <- mtcars[mtcars$hp > 250,]
+(big_boys <- mtcars[mtcars$hp > 250,])
 
 # From the bottom of the help page.
 # Not sure I can interpret, but it looks cool.
@@ -118,7 +136,7 @@ big_gdp <- data[mask,] # ---> Argh - Check the dataframe.  All those NAs
 # we used a 3-month step).  But first, check out na.omit()
 ?na.omit
 good <- na.omit(data, cols="GDP")
-big_gdp <- good[good$GDP > 18000,]
+(big_gdp <- good[good$GDP > 18000,])
 
 
 # ----------------------------------------------------------------------------------
@@ -162,4 +180,14 @@ b <- na.omit(atl, cols='dep_delay')
 sum(b$dep_delay)
 # or skip the intermediate data frame b
 sum(na.omit(atl, cols='dep_delay')$dep_delay)
+
+
+#
+# Read the airline satisfaction data
+airline <- read.csv("data\\airline_passenger_satisfaction.csv", stringsAsFactors=TRUE)
+head(airline,10)
+# structure of the data
+str(airline)
+summary(airline)
+
 
