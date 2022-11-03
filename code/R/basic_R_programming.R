@@ -217,6 +217,20 @@ factor_data <- factor(data) # Check the environment --->
 print(factor_data)
 print(is.factor(factor_data))
 class(factor_data)
+levels(factor_data)
+
+#
+# Another factor example
+#
+gender <- factor(c("Male", "Female", "Female", "Male", "Male", "Male", "Female", "Female", "Unspecified"))
+levels(gender)
+
+# to specify the order of levels
+gender <- factor(c("Male", "Female", "Female", "Male", "Male", "Male", "Female", "Female", "Unspecified"),
+                 levels = c("Unspecified", "Male", "Female"))
+levels(gender)
+# Why use factors rather than simply using strings?
+#  Memory, speed (for comparison operations)
 
 
 # --------------------------------------------------------------
