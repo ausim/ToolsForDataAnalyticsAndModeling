@@ -58,7 +58,14 @@ mtcars[['wt']]
 # Note the trailing comma when row slicing.  Without it, you're requesting
 # a column rather than row slice.
 mtcars['Hornet Sportabout',]
+# requesting a column -- same expression except no trailing comma
+mtcars['Hornet Sportabout']
+# but there is no such column.  But if you use the row number, you get the same thing
+mtcars[5,]
+# unless you forget the trailing comma
+mtcars[5]
 
+# More examples
 rows1 <- mtcars['Hornet Sportabout',c(1, 2, 3)]
 rows2 <- mtcars[c(1, 3, 5, 7),]
 
