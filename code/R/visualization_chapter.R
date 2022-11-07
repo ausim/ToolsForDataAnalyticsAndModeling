@@ -88,6 +88,8 @@ ggplot(data = mpg) +
 # Try displacement instead
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, size = displ))
+# Now the size doesn't really give us more information since it's
+# already the x variable
 
 
 # What if we flip the x and size?
@@ -128,8 +130,11 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = class)) +
 #
 # Now with the iris dataset
 #
-# Is there a relationship between Petal Width and Petal Length? Does 
-# the relationship depend on species?
+# Is there a relationship between Petal Width and Petal Length? 
+ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Petal.Width)) +
+  geom_point()
+
+# Does the relationship depend on species?
 ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Petal.Width)) +
   geom_point(mapping = aes(color = Species))
 
@@ -148,6 +153,7 @@ ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Sepal.Length)) +
 # 
 # The Auburn real estate dataset
 #
+# Relationship between house price and square footage
 ggplot(data = aure) + 
   geom_point(mapping = aes(x = SqFt, y = Price))
 
@@ -179,7 +185,6 @@ ggplot(data = tiris) +
 ggplot(data = aure) + 
   geom_point(mapping = aes(x = SqFt, y = Price)) +
   facet_wrap(~ Bedrooms)
-
 
 # facets should be discrete
 
@@ -244,10 +249,12 @@ ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length, color=Spe
   geom_smooth(method=glm)
 # note that the color component is in the global data
 # definition rather than the point layer - so it applies to both geoms
+
 # If we switch to the point geom, we get a single geom_smooth object with colored points
 ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length))+
   geom_point( mapping=aes(color=Species)) +
   geom_smooth(method=glm)
+
 # and if we switch it to the smooth geom, we get non-colored points
 ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length))+
   geom_point() +
@@ -322,8 +329,9 @@ fix(diamonds)
 ggplot(data = diamonds) + 
   geom_bar(mapping = aes(x = cut))
 # Looking in the two datasets, there is no "count" field -- statistical transformation
+#
 # Check the Powerpoint for the Stats slide.
-
+#
 
 # if you prefer proportions ... DEPRECATED VERSION
 #ggplot(data = diamonds) + 
@@ -446,10 +454,10 @@ ggplot(usa, aes(long, lat, group = group)) +
 # I've gone and/or worked.
 #
 schools <- tibble(
-  school   = c( 'Auburn', 'Penn State',    'TAMU',  'GaTech'),
-  lat      = c(32.609077,    40.790703, 30.622374,  33.74831),
-  long     = c( -85.8173,   -77.858795, -96.32585, -84.39111),
-  students = c(    30460,        46810,     72982,     36302),
+  school   = c( 'Auburn', 'Penn State',    'TAMU',  'GaTech', 'NC State'),
+  lat      = c(32.609077,    40.790703, 30.622374,  33.74831, 35.7847),
+  long     = c( -85.8173,   -77.858795, -96.32585, -84.39111, -78.6821),
+  students = c(    30460,        46810,     72982,     36302, 34015),
   group = 1
   )
 
