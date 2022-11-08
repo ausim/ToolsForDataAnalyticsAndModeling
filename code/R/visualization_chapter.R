@@ -47,6 +47,8 @@ aure <- read_csv("data\\au_real_estate_2017_anon.csv")
 # structure of the data
 str(aure)
 
+# Car prices
+carprices <- read_csv("data\\CarPricesSet.csv")
 
 #
 # Scatter plots -----
@@ -156,6 +158,29 @@ ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Sepal.Length)) +
 # Relationship between house price and square footage
 ggplot(data = aure) + 
   geom_point(mapping = aes(x = SqFt, y = Price))
+
+#
+# Car prices
+# 
+# Relationship between mileage and price
+ggplot(data = carprices) + 
+  geom_point(mapping = aes(x = Mileage, y = Price))
+# oops -- what's the issue?
+carprices$Mileage[1:5]
+class(carprices$Mileage)
+
+# Search for "parse number from string r"
+# https://stackoverflow.com/questions/14543627/extracting-numbers-from-vectors-of-strings
+#
+# Try parse_number from readr
+carprices$MileageNumeric <- parse_number(carprices$Mileage)
+ggplot(data = carprices) + 
+  geom_point(mapping = aes(x = MileageNumeric, y = Price))
+# hmmmm - maybe outliers
+min(carprices$MileageNumeric); max(carprices$MileageNumeric)
+min(carprices$Price); max(carprices$Price)
+# Yep (as you already know) the dataset needs some pre-processing ...
+# we'll come back to this one with Data Transformation.
 
 
 # 
