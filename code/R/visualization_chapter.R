@@ -43,12 +43,14 @@ library(help = "datasets")
 # Some "local data" -- Auburn Real Estate from 2017.  Note that
 # we are reading this one directly from a csv file
 aure <- read_csv("data\\au_real_estate_2017_anon.csv")
-
+# read_csv is part of the readr package
 # structure of the data
 str(aure)
 
-# Car prices
+# Car prices -  From HW5 (sorry if you were hoping to never see this
+# dataset again :-)).
 carprices <- read_csv("data\\CarPricesSet.csv")
+str(carprices)
 
 #
 # Scatter plots -----
@@ -87,12 +89,14 @@ ggplot(data = mpg) +
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, size = class))
 # Note the warning about using size for a discrete variable.
+unique(mpg$class)
+
 # Try displacement instead
+unique(mpg$disp)
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, size = displ))
 # Now the size doesn't really give us more information since it's
 # already the x variable
-
 
 # What if we flip the x and size?
 ggplot(data = mpg) + 
@@ -158,6 +162,7 @@ ggplot(data = tiris, mapping = aes(x = Petal.Length, y = Sepal.Length)) +
 # Relationship between house price and square footage
 ggplot(data = aure) + 
   geom_point(mapping = aes(x = SqFt, y = Price))
+# We will use this dataset when we cover EDA next week.
 
 #
 # Car prices
@@ -171,9 +176,10 @@ class(carprices$Mileage)
 
 # Search for "parse number from string r"
 # https://stackoverflow.com/questions/14543627/extracting-numbers-from-vectors-of-strings
-#
+#    The regex examples are very (very) useful, but we'll use the simple conversion here.
 # Try parse_number from readr
 carprices$MileageNumeric <- parse_number(carprices$Mileage)
+#
 ggplot(data = carprices) + 
   geom_point(mapping = aes(x = MileageNumeric, y = Price))
 # hmmmm - maybe outliers
@@ -194,6 +200,8 @@ ggplot(data = mpg) +
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy)) + 
   facet_wrap(~ class)
+# Note how we just "added" the facet_wrap instruction to the 
+# ggplot expression.
 
 # Iris dataset
 ggplot(data = tiris) +
@@ -277,7 +285,7 @@ ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length, color=Spe
 
 # If we switch to the point geom, we get a single geom_smooth object with colored points
 ggplot(data = tiris, mapping = aes(x = Sepal.Length, y = Petal.Length))+
-  geom_point( mapping=aes(color=Species)) +
+  geom_point(mapping=aes(color=Species)) +
   geom_smooth(method=glm)
 
 # and if we switch it to the smooth geom, we get non-colored points
@@ -329,6 +337,9 @@ ggplot(data = filter(mpg, drv == 'f'),
   geom_smooth(method="glm", se=FALSE) +
   geom_point()
 
+#
+# Powerpoint - Grammar of Graphics summary
+#
 
 # ---------------------------------
 #
@@ -415,6 +426,9 @@ ggplot(data = aure) +
 # Diamond prices
 ggplot(data = diamonds) +
   geom_histogram(mapping = aes(x = price))
+
+# Bar - categorical data
+# Histogram - numeric data
 
 # Some additional examples in online_shoppers.R
 
