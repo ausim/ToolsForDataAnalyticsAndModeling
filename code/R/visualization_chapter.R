@@ -337,10 +337,6 @@ ggplot(data = filter(mpg, drv == 'f'),
   geom_smooth(method="glm", se=FALSE) +
   geom_point()
 
-#
-# Powerpoint - Grammar of Graphics summary
-#
-
 # ---------------------------------
 #
 # Statistical transformations - for the previous plots, we
@@ -427,8 +423,8 @@ ggplot(data = aure) +
 ggplot(data = diamonds) +
   geom_histogram(mapping = aes(x = price))
 
-# Bar - categorical data
-# Histogram - numeric data
+# Bar - categorical data - Counting
+# Histogram - numeric data - Binning
 
 # Some additional examples in online_shoppers.R
 
@@ -504,4 +500,9 @@ ggplot(usa, aes(long, lat, group = group)) +
   geom_polygon(fill = "white", colour = "black") +
   coord_quickmap() +
   geom_point(data = schools, aes(x = long, y = lat, color=school, size = students))
+
+#
+# Powerpoint - Grammar of Graphics summary
+#
+
 
