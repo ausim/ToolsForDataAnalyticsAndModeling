@@ -1,0 +1,27 @@
+---
+title: "HW6 - King County Real Estate Assignment"
+output: html_notebook
+author: Jeff Smith
+---
+This homework involves two problems -- both based on a real estate dataset similar (but not identical) the Auburn dataset that we used in class.
+
+You are planning a move to Seattle and are hoping to buy a house/condo/townhouse with your new-found wealth from your signing bonus with Amazon.  For the first problem, using the provided King County real estate transaction information, conduct an Exploratory Data Analysis with the primary objective of collecting information for your future purchase.  The data are similar, but not identical to the Auburn real estate data that we used in class, so you should definitely explore the additional columns and look for meaningful relationships in the data.  The script file that we used with the Auburn data in class should be of significant help to you.  
+
+In addition to the analysis/plots that you generate, be sure to use markdown sections of this notebook to describe your findings and discuss "what the data tells you."  Feel free to make comparisons to the Auburn market if you find that informative.  Note that this assignment is more than just generating random plots.  EDA is a process where you explore the data to find useful information and meaningful relationships in the data.  This analysis should include the use of tools from the Data Transformation chapter (filtering, sorting, mutating, grouping and summarizing, etc.) in addition to plots and graphs from the visualization chapter.  Note that not everything that you try will provide useful information, so be sure to use markdown to explain what you find and which visualizations you find informative and which ones you find non-informative.
+
+Second, use the modelr package to develop a regression-type predictive model that predicts price based on square footage (using sqft_living for the square footage).  The models_example1.R script file and the corresponding class and video materials should provide a guideline for this part of the assignment.  Note that you are free to use the lm or glm methods to verify your model, but I want you to replicate the basic process described in the book and the models_example.R script and associated video module.
+
+The data file used for this assignment is from the Coursera course "Machine Learning: Regression" - https://www.coursera.org/learn/ml-regression/home/welcome
+
+
+```{r}
+library("tidyverse")
+getwd()
+
+kcre <- read_csv("..\\..\\data\\kc_house_data.csv")
+kcre
+
+```
+
+
+
