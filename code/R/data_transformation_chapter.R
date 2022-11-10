@@ -76,7 +76,7 @@ jan
 (nov_dec <- filter(flights, month %in% c(11, 12)))
 #
 # In R, the %in% operator tests whether an element is in a vector or dataframe 
-x <- 2
+x <- 7
 x %in% c(1, 2, 3)
 #
 # dplyr filter() uses this operator internally to create 
@@ -171,6 +171,12 @@ late_beach <- filter(beach, arr_delay > 45)
 late_beach <- filter(flights, dest == 'MIA' & (month %in% c(1, 2, 11, 12)) & arr_delay > 45)
 # or
 late_beach <- filter(flights, dest == 'MIA', (month %in% c(1, 2, 11, 12)), arr_delay > 45)
+
+# What about Jacksonville (JAX)?  It's a beach location also.
+filter(flights, dest == 'JAX', (month %in% c(1, 2, 11, 12)), arr_delay > 45)
+# combining JAX and MIA
+late_beach1 <- filter(flights, (dest == 'JAX' | dest == 'MIA'), (month %in% c(1, 2, 11, 12)), arr_delay > 45)
+# Note the parens on the dest conditions.
 
 #
 # Arrange ----------------------------------------------------------
