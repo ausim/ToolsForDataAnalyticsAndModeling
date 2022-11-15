@@ -200,7 +200,7 @@ arrange(flights, desc(day), month)
 select(flights, year, month, day, dep_time)
 # combining functions
 select(arrange(flights, desc(day)), day, month, dep_time)
-# slightly more efficient ...
+# slightly more efficient ... possibly.
 arrange(select(flights, day, month, dep_time), desc(day))
 
 # helper functions for selecting columns
