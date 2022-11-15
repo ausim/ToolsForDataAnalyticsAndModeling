@@ -463,6 +463,9 @@ diamonds
     ) %>%
     arrange(desc(avg_price)))
 
+#
+#  More example datasets
+#
 # Accessing build-in datasets -------
 library(datasets)
 
@@ -470,16 +473,61 @@ library(datasets)
 library(help='datasets')
 # also at https://www.rdocumentation.org/packages/datasets/versions/3.6.2
 
+#
 # How about some European stock prices?
 (eustock <- as_tibble(datasets::EuStockMarkets))
+str(eustock)
 
+# Focus on the DAX (Germany) and FTSE (Great Britain)
 select(eustock, DAX, FTSE)
 
-filter(select(eustock, DAX, FTSE), DAX > 1650)
+# scatter plot
+ggplot(data = select(eustock, DAX, FTSE)) + 
+  geom_point(mapping = aes(x = DAX, y = FTSE))
 
-str(eustock)
-summary(eustock)
+# Look at a subset of the stock
+filter(select(eustock, DAX, FTSE), DAX > 3000)
+
+ggplot(data = filter(select(eustock, DAX, FTSE), DAX > 3000)) + 
+  geom_point(mapping = aes(x = DAX, y = FTSE))
+
+# Maximum value?
+max(eustock$DAX)
+# Smaller subset around the max
+ggplot(data = filter(select(eustock, DAX, FTSE), DAX > 6000)) + 
+  geom_point(mapping = aes(x = DAX, y = FTSE))
+
+# Summary provide more "general" info.
+summary(select(eustock, DAX, FTSE))
+
+# IQR (Innerquartile range)
+ggplot(data = filter(select(eustock, DAX, FTSE), DAX >= 1744, DAX <= 2722)) + 
+  geom_point(mapping = aes(x = DAX, y = FTSE))
+
+#
+# US Arrests?
+(tUSArrests <- as_tibble(datasets::USArrests))
+# Hmmm .. No state names.
+
+# Check out datasets:state instead
+?state
+
+# x77 looks interesting, but still no state names
+(tx77 <- as_tibble(datasets::state.x77))
+# but state.name includes the state names. 
+# add the name
+tx77$name <- datasets::state.name
+tx77
+
+# Life expectancy
+max(tx77$`Life Exp`); min(tx77$`Life Exp`)
+#
+arrange(select(tx77,name, `Life Exp`), `Life Exp`)
+# best to worse
+arrange(select(tx77,name, `Life Exp`), desc(`Life Exp`))
+
+# Us
+filter(tx77, name == 'Alabama')
 
 # Practice, practice, practice.
-
 
