@@ -200,6 +200,8 @@ arrange(flights, desc(day), month)
 select(flights, year, month, day, dep_time)
 # combining functions
 select(arrange(flights, desc(day)), day, month, dep_time)
+# slightly more efficient ...
+arrange(select(flights, day, month, dep_time), desc(day))
 
 # helper functions for selecting columns
 select(flights, starts_with("arr"))
@@ -470,6 +472,10 @@ library(help='datasets')
 
 # How about some European stock prices?
 (eustock <- as_tibble(datasets::EuStockMarkets))
+
+select(eustock, DAX, FTSE)
+
+filter(select(eustock, DAX, FTSE), DAX > 1650)
 
 str(eustock)
 summary(eustock)
