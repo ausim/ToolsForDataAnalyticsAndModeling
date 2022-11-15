@@ -52,7 +52,28 @@ tdata$RevenueBoolean <- as.logical(tdata$Revenue)
     )
   )
 
+# Returning visitors generate more revenue than new visitors do
+(RevByVType <- tdata %>%
+    group_by(VisitorType) %>%
+    summarise (
+      count = n(),
+      total_rev = sum(RevenueBoolean, na.rm = TRUE)
+    ) %>%
+    mutate (
+      rev_rate = total_rev / count
+    ) %>%
+    arrange(desc(rev_rate)
+    )
+)
 
+# Revenue is proportional to time spend investigating products 
+# Have a look at the duration
+unique(data$ProductRelated_Duration)
+# Would probably want to cluster these into fewer buckets and then
+# aggregate and summarize across the buckets.  Something to think about ...
+
+# 
+#
 # Operating Systems?
 ggplot(data = tdata) + 
   geom_bar(mapping = aes(x = OperatingSystems, fill = OperatingSystems))

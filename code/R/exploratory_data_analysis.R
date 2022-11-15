@@ -11,7 +11,13 @@ library("tidyverse")
 # structure of the data
 str(aure)
 
-# Add some columns
+# MLSID - the first character is the Property type
+aure$MLSID
+# We can use substring to pick off the first character
+substring(aure$MLSID, 1, 1)
+# more below
+
+# Add some columns to the tibble
 aure <- aure %>%
   mutate(
     Baths = BathsFull + BathsHalf,
@@ -30,7 +36,7 @@ ggplot(data = aure) +
 # or if you prefer proportions
 ggplot(data = aure) +
   geom_bar(mapping = aes(x=PType, y=stat(prop), group=1))
-# Could easily remove the values ('O' and 'P') if we wanted
+# Could easily remove the values ('O' and 'P') if we wanted (right?)
 # See them first
 (bad_recs <- filter(aure, PType == 'O' | PType == 'P'))
 # Make a mental note -- leave them in for now.  Ideally, we would explore
