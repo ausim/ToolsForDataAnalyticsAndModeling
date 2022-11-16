@@ -18,13 +18,15 @@ substring(aure$MLSID, 1, 1)
 # more below
 
 # Add some columns to the tibble
-aure <- aure %>%
+(aure <- aure %>%
   mutate(
     Baths = BathsFull + BathsHalf,
     PType = substring(MLSID, 1, 1),
     NBed  = as.character(Bedrooms),
     NBath = as.character(Baths)
-  )
+  ))
+# check the column types
+str(aure)
 # PTypes: C - Condo; H - ?; N - New Construction; O - First right of refusal
 #   P - Proposed; R - Residential; S - ?; T - Townhome
 # Shouldn't be any 'O' or 'P' values 
@@ -52,6 +54,7 @@ ggplot(data = aure) +
   geom_vline(xintercept=median(aure$Price), color="blue") 
 # Note the vline geoms overlaying the mean and median prices on the histogram.
 # How did we choose the binwidth for this plot?
+# Experiment with some other binwidth values.
 
 # or if you prefer the distribution estimate
 ggplot(data = aure) +
@@ -59,7 +62,7 @@ ggplot(data = aure) +
   geom_vline(xintercept=mean(aure$Price), color="red") + 
   geom_vline(xintercept=median(aure$Price), color="blue") 
 
-
+#
 # Property sizes histogram
 ggplot(data = aure) +
   geom_histogram(mapping = aes(x = SqFt)) +
@@ -68,6 +71,7 @@ ggplot(data = aure) +
 filter(aure, SqFt == 0)
 # Make a mental note that these data exist in our dataset.
 # No binwidth argument here -- why not?
+# Try some values.
 
 
 # Number of bedrooms/bathrooms
@@ -162,6 +166,9 @@ ggplot(data = aure, mapping = aes(x = NBed, y = Price)) +
 # same plot using the grouping function with the continuous variable
 ggplot(data = aure, mapping = aes(x = Bedrooms, y = Price)) + 
   geom_boxplot(mapping = aes(group = cut_width(Bedrooms,1)))
+# Note the group specifier and cut_width function --- 
+?geom_boxplot # search for group
+vignette("ggplot2-specs")  # search for cut_width
 
 # price ~ baths (half + full)
 ggplot(data=aure) +
@@ -256,15 +263,15 @@ aure %>%
 ggplot(data = subdivision) +
   geom_col(mapping = aes(x=Subdivision, y=num))
 # filter down
-ggplot(data = filter(subdivision, num > 20)) +
+ggplot(data = filter(subdivision, num >= 20)) +
   geom_col(mapping = aes(x=Subdivision, y=num))
 # flip to see the subdivisions
-ggplot(data = filter(subdivision, num > 20)) +
+ggplot(data = filter(subdivision, num >= 20)) +
   geom_col(mapping = aes(x=Subdivision, y=num)) +
   coord_flip()
 
 # Median price by subdivision?
-ggplot(data = filter(subdivision, num > 20)) +
+ggplot(data = filter(subdivision, num >= 20)) +
   geom_col(mapping = aes(x=Subdivision, y=med_price)) +
   coord_flip()
 
