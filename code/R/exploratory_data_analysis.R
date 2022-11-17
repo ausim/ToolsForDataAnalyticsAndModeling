@@ -27,6 +27,8 @@ substring(aure$MLSID, 1, 1)
   ))
 # check the column types
 str(aure)
+# Note that NBed is the "character version" of Bedrooms.
+#
 # PTypes: C - Condo; H - ?; N - New Construction; O - First right of refusal
 #   P - Proposed; R - Residential; S - ?; T - Townhome
 # Shouldn't be any 'O' or 'P' values 
@@ -41,8 +43,13 @@ ggplot(data = aure) +
 # Could easily remove the values ('O' and 'P') if we wanted (right?)
 # See them first
 (bad_recs <- filter(aure, PType == 'O' | PType == 'P'))
+# Could also include H - let's switch to %in% since we have 3 potential
+# values now.
+(bad_recs <- filter(aure, PType %in% c('O', 'P', 'H')))
 # Make a mental note -- leave them in for now.  Ideally, we would explore
 # further to see what caused the problem.
+
+
 
 #
 # Variation Samples -------------------------------------------
@@ -61,7 +68,10 @@ ggplot(data = aure) +
   geom_freqpoly(mapping = aes(x = Price), binwidth = 50000, size=1.5, color="orange") +
   geom_vline(xintercept=mean(aure$Price), color="red") + 
   geom_vline(xintercept=median(aure$Price), color="blue") 
-
+#
+# change the binwidth to 100000 and note that the mode is now left of 
+# the mean/median.  What does this mean?
+#
 #
 # Property sizes histogram
 ggplot(data = aure) +
@@ -69,8 +79,10 @@ ggplot(data = aure) +
   geom_vline(xintercept=mean(aure$SqFt), color="red")
 # Yikes -- a 0-sqft property?  Let's check it out....
 filter(aure, SqFt == 0)
+# identify 
+select(filter(aure, SqFt == 0), Address, Subdivision, Price)
 # Make a mental note that these data exist in our dataset.
-# No binwidth argument here -- why not?
+# No binwidth argument here -- why not?  Note the stat_bin() warning.
 # Try some values.
 
 
